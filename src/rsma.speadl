@@ -1,0 +1,45 @@
+import rsma.warehouse.IWarehouseProvide
+import rsma.environnement.IEnvironnementLookAt
+import rsma.environnement.IEnvironnementActions
+import rsma.environnement.IEnvironnementObservable
+import rsma.sheduler.ISchedulingSMA
+
+namespace rsma{
+	
+	component Sheduler {
+		provides shedulerLauchPort : IWarehouseProvide
+		requires shedulerSMAPort : ISchedulingSMA
+	}
+	
+	component Robots {
+		provides robotsShedulingPort : ISchedulingSMA
+		requires robotsLookAtEnvPort : IEnvironnementLookAt
+		requires robotsActsToEnvPort : IEnvironnementActions
+	}
+	
+	component Environnement {
+		provides envLookAtPort : IEnvironnementLookAt
+		provides envActions : IEnvironnementActions
+		provides envObservable : IEnvironnementObservable
+	}
+	
+	component GUI {
+		provides guiWarehousePort : IEnvironnementObservable
+	}
+	
+	component Warehouse{
+		provides warehouseObservablePort : IWarehouseProvide 
+		
+		part sheduler : Sheduler {
+			bind shedulerSMAPort to robots.robotsShedulingPort
+		}
+		
+		part robots : Robots {
+			bind robotsLookAtEnvPort to environnement.envLookAtPort
+			bind robotsActsToEnvPort to environnement.envActions
+		}
+		
+		part environnement : Environnement {}
+	}
+	
+}

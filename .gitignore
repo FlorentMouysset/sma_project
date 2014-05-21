@@ -1,0 +1,6 @@
+/bin
+/speadl-gen
+.classpath
+*.*~
+/.settings
+/.project
