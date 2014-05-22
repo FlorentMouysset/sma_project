@@ -1,4 +1,4 @@
-package rsma.gui;
+package rsma.impl;
 
 public class GUIImpl {
 

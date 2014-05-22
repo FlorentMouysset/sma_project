@@ -1,24 +1,24 @@
-import rsma.warehouse.IWarehouseProvide
-import rsma.environnement.IEnvironnementLookAt
-import rsma.environnement.IEnvironnementActions
-import rsma.environnement.IEnvironnementObservable
-import rsma.sheduler.ISchedulingSMA
+import rsma.interfaces.IEnvironnementActions
+import rsma.interfaces.IEnvironnementObservable
+import rsma.interfaces.IEnvironnementAnalysis
+import rsma.interfaces.IRobotActions
+import rsma.interfaces.IWarehouseActions
 
 namespace rsma{
 	
 	component Sheduler {
-		provides shedulerLauchPort : IWarehouseProvide
-		requires shedulerSMAPort : ISchedulingSMA
+		provides shedulerLaunchPort : IWarehouseActions
+		requires shedulerSMAPort : IRobotActions
 	}
 	
-	component Robots {
-		provides robotsShedulingPort : ISchedulingSMA
-		requires robotsLookAtEnvPort : IEnvironnementLookAt
+	component Robot {
+		provides robotsShedulingPort : IRobotActions
+		requires robotsLookAtEnvPort : IEnvironnementAnalysis
 		requires robotsActsToEnvPort : IEnvironnementActions
 	}
 	
 	component Environnement {
-		provides envLookAtPort : IEnvironnementLookAt
+		provides envLookAtPort : IEnvironnementAnalysis
 		provides envActions : IEnvironnementActions
 		provides envObservable : IEnvironnementObservable
 	}
@@ -28,18 +28,32 @@ namespace rsma{
 	}
 	
 	component Warehouse{
-		provides warehouseObservablePort : IWarehouseProvide 
+		provides warehouseObservablePort : IWarehouseActions 
 		
 		part sheduler : Sheduler {
 			bind shedulerSMAPort to robots.robotsShedulingPort
 		}
 		
-		part robots : Robots {
+		part robots : Robot {
 			bind robotsLookAtEnvPort to environnement.envLookAtPort
 			bind robotsActsToEnvPort to environnement.envActions
 		}
 		
 		part environnement : Environnement {}
 	}
+	
+/*	ecosystem Robots
+	{
+		
+		provides robotsShedulingPort : ISchedulingSMA
+		requires robotsLookAtEnvPort : IEnvironnementLookAt
+		requires robotsActsToEnvPort : IEnvironnementActions
+		
+		species Robot {
+			
+		}
+	}*/
+	
+	
 	
 }
