@@ -1,20 +1,18 @@
 package rsma.util;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import rsma.interfaces.IEnvironnementAnalysis;
 import rsma.interfaces.IEnvironnementAnalysis.WORDL_ENTITY;
 
 
 public class WarehouseChangement {
-	private Map<Position,WORDL_ENTITY> mapModification = new HashMap<Position, IEnvironnementAnalysis.WORDL_ENTITY>(); 
-
+	private Map<Position,WORDL_ENTITY> mapModification;
 	
-	public void addChangement(Position position, WORDL_ENTITY we){
-		mapModification.put(position, we);
+	public WarehouseChangement(Map<Position, WORDL_ENTITY> mapModification) {
+		super();
+		this.mapModification = mapModification;
 	}
-	
+
 	public Map<Position,WORDL_ENTITY> getMap(){
 		return this.mapModification;
 	}
