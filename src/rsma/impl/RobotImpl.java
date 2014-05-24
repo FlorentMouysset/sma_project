@@ -1,7 +1,7 @@
 package rsma.impl;
 
 import rsma.Robots.Robot;
-import rsma.impl.EnvironnementImpl.WORDL_ENTITY;
+import rsma.interfaces.IEnvironnementAnalysis.WORDL_ENTITY;
 import rsma.interfaces.IRobotActions;
 import rsma.util.Position;
 

@@ -1,7 +1,6 @@
 package rsma.impl;
 
 import rsma.EcoJoining;
-import rsma.impl.EnvironnementImpl.WORDL_ENTITY;
 import rsma.interfaces.IEnvironnementActions;
 import rsma.interfaces.IEnvironnementAnalysis;
 import rsma.util.Position;

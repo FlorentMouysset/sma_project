@@ -6,6 +6,7 @@ import java.util.Observer;
 import rsma.Environnement;
 import rsma.interfaces.IEnvironnementActions;
 import rsma.interfaces.IEnvironnementAnalysis;
+import rsma.interfaces.IEnvironnementAnalysis.WORDL_ENTITY;
 import rsma.interfaces.IEnvironnementObservable;
 import rsma.util.Position;
 import rsma.util.WarehouseChangement;
@@ -13,7 +14,6 @@ import rsma.util.WarehouseChangement;
 
 public class EnvironnementImpl extends Environnement{
 
-	public enum WORDL_ENTITY {EMPTY, WALL, RESOURCE, ROBOT, ROBOT_AND_RESOURCE /*, PLACE_PULL, PUSH_RESOURCE*/}
 	
 	private WORDL_ENTITY[][] world = new WORDL_ENTITY[100][100]; //TODO 
 	
