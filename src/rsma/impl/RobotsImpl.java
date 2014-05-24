@@ -6,6 +6,7 @@ import java.util.List;
 import rsma.EcoJoining;
 import rsma.Robots;
 import rsma.interfaces.IRobotActions;
+import rsma.util.Position;
 
 public class RobotsImpl extends Robots{
 
@@ -15,7 +16,7 @@ public class RobotsImpl extends Robots{
 	protected void start() {
 		for(int i=0; i<3; i++){//TODO
 			System.out.println("création de robots ...");
-			robotList.add(newRobot(i+""));
+			robotList.add(newRobot(i+"", new Position(0,0)));
 		}
 		
 	};
@@ -40,8 +41,8 @@ public class RobotsImpl extends Robots{
 	}
 
 	@Override
-	protected Robot make_Robot(String id) {
-		return new RobotImpl(id);
+	protected Robot make_Robot(String id, Position positionInit) {
+		return new RobotImpl(id, positionInit);
 	}
 
 

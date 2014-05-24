@@ -7,10 +7,11 @@ import rsma.util.Position;
 
 public class RobotImpl extends Robot{
 	private final String id;
+	private Position currentPosition;
 	
-	
-	public RobotImpl(String id){
+	public RobotImpl(String id, Position positionInit){
 		this.id = id;
+		this.currentPosition = positionInit;
 	}
 	
 	@Override
