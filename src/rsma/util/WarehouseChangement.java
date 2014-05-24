@@ -1,5 +1,9 @@
 package rsma.util;
 
-public class WarehouseChangement {
+import java.awt.Point;
+import java.awt.geom.Point2D;
 
+public class WarehouseChangement {
+	
+	
 }

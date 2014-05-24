@@ -13,6 +13,8 @@ public interface IEnvironnementActions {
 	void pushResource(Position position);
 	
 	
-	void moveLane();
+	/**Move the lane from the old high to the new high </br>
+	 * All robots into the lane are kill.*/
+	void moveLane(int newHigh);
 	
 }

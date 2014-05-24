@@ -70,7 +70,7 @@ public class EnvironnementImpl extends Environnement{
 			}
 			
 			@Override
-			public void moveLane() {
+			public void moveLane(int newHigh) {
 				throw new RuntimeException("pas fait!!");
 				//notifyChangement(new WarehouseChangement());
 			}
