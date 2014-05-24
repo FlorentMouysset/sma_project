@@ -9,4 +9,16 @@ public interface IEnvironnementAnalysis {
 	/**Return the WORDL_ENTITY of a position */
 	WORDL_ENTITY getWordEntityAt(Position position);
 	
+	/**
+	 * return the position of the pull zone. The position is the up corner left.
+	 * 
+	 * */
+	Position getPositionOfPullZone();
+	
+	/**
+	 * return the position of the push zone. The position is the up corner right.
+	 * 
+	 * */
+	Position getPositionOfPushZone();
+	
 }

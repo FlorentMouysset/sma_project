@@ -35,6 +35,18 @@ public class EnvironnementImpl extends Environnement{
 				System.out.println("ENV : quelqu'un fait un get à " + position + " il y a "+ world[position.getX()][position.getY()]);
 				return world[position.getX()][position.getY()];
 			}
+
+			@Override
+			public Position getPositionOfPullZone() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public Position getPositionOfPushZone() {
+				// TODO Auto-generated method stub
+				return null;
+			}
 		};
 	}
 
@@ -88,6 +100,7 @@ public class EnvironnementImpl extends Environnement{
 			@Override
 			public void registerObserver(Observer observer) {
 				envObserbableDelegate.addObserver(observer);
+				//TODO send all map !
 			}
 		};
 	}

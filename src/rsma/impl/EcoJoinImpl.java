@@ -20,6 +20,16 @@ public class EcoJoinImpl extends EcoJoining{
 						System.out.println("Join LookAt " + position);
 						return eco_requires().prxLookAtPort().getWordEntityAt(position);
 					}
+
+					@Override
+					public Position getPositionOfPullZone() {
+						return eco_requires().prxLookAtPort().getPositionOfPullZone();
+					}
+
+					@Override
+					public Position getPositionOfPushZone() {
+						return eco_requires().prxLookAtPort().getPositionOfPushZone();
+					}
 				};
 			}
 			
