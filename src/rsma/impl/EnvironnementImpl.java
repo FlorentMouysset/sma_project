@@ -66,11 +66,10 @@ public class EnvironnementImpl extends Environnement{
 				}else{
 					System.out.println("KO pour ce mvt, la position n'est pas vide");
 				}
-				//return true/false selon réusite TODO !!!
 			}
 			
 			@Override
-			public void moveLane(int newHigh) {
+			public void moveLane(int laneId, int newHigh) {
 				throw new RuntimeException("pas fait!!");
 				//notifyChangement(new WarehouseChangement());
 			}

@@ -43,7 +43,7 @@ public class EcoJoinImpl extends EcoJoining{
 					}
 					
 					@Override
-					public void moveLane(int newHigh) {
+					public void moveLane(int laneId, int newHigh) {
 						System.out.println("** WARNING **");
 						System.out.println("Les robots n'ont pas le droit de bouger le couloir !");
 						//eco_requires().prxActions().moveLane();
