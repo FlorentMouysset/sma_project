@@ -1,5 +1,7 @@
 package rsma.impl;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -15,6 +17,9 @@ import rsma.util.WarehouseChangement;
 public class EnvironnementImpl extends Environnement{
 
 	
+	protected static final int Y_SIZE = 0;//TODO
+	protected static final int X_SIZE = 0;
+
 	private WORDL_ENTITY[][] world = new WORDL_ENTITY[100][100]; //TODO 
 	
 	// because we cannot extends Observable too, we create a delegate
@@ -57,13 +62,13 @@ public class EnvironnementImpl extends Environnement{
 			@Override
 			public void pushResource(Position position) {
 				world[position.getX()][position.getY()] = WORDL_ENTITY.RESOURCE;
-				notifyChangement(new WarehouseChangement());
+				notifyChangement(new WarehouseChangement(makeTheSimpleChangingMap(position)));
 			}
 			
 			@Override
 			public void pullResource(Position position) {
 				world[position.getX()][position.getY()] = WORDL_ENTITY.EMPTY;
-				notifyChangement(new WarehouseChangement());
+				notifyChangement(new WarehouseChangement(makeTheSimpleChangingMap(position)));
 			}
 			
 			@Override
@@ -73,7 +78,10 @@ public class EnvironnementImpl extends Environnement{
 					WORDL_ENTITY oldRobot = world[oldPosition.getX()][oldPosition.getY()];
 					world[oldPosition.getX()][oldPosition.getY()] = WORDL_ENTITY.EMPTY;
 					world[newPosition.getX()][newPosition.getY()] = oldRobot;
-					notifyChangement(new WarehouseChangement());
+					
+					Map<Position, WORDL_ENTITY> changingMap = makeTheSimpleChangingMap(oldPosition);
+					changingMap.putAll(makeTheSimpleChangingMap(newPosition));
+					notifyChangement(new WarehouseChangement(changingMap));
 					System.out.println("Ok pour ce deplacement");
 				}else{
 					System.out.println("KO pour ce mvt, la position n'est pas vide");
@@ -83,7 +91,9 @@ public class EnvironnementImpl extends Environnement{
 			@Override
 			public void moveLane(int laneId, int newHigh) {
 				throw new RuntimeException("pas fait!!");
-				//notifyChangement(new WarehouseChangement());
+				//makeTheRectangleChanginMap
+				//notifyChangement(new WarehouseChangement()); TODO
+				
 			}
 			
 			private void notifyChangement(WarehouseChangement change){
@@ -100,13 +110,37 @@ public class EnvironnementImpl extends Environnement{
 			@Override
 			public void registerObserver(Observer observer) {
 				envObserbableDelegate.addObserver(observer);
-				//TODO send all map !
+				
+				//make the changing map = all the world because is the new observer
+				Map<Position, WORDL_ENTITY> changingMap = makeTheRectangleChanginMap(0,0,X_SIZE, Y_SIZE);
+				WarehouseChangement changement = new WarehouseChangement(changingMap);
+				
+				//carefull just notify the new observer ! So we use the direct method.
+				observer.update(envObserbableDelegate, changement);
 			}
 		};
 	}
 	
+	/**
+	 * Return the changing map for a delimited zone.</br>
+	 * @param xDeb yDeb the position to start the rectangle zone.
+	 * By convention 0,0 is up left
+	 */
+	private Map<Position, WORDL_ENTITY> makeTheRectangleChanginMap(int xDeb, int yDeb, int xLenght, int yLenght){
+		Map<Position, WORDL_ENTITY> changingMap = new HashMap<Position, IEnvironnementAnalysis.WORDL_ENTITY>();
+		for(int x=xDeb; x<xDeb+xLenght ; x++){
+			for(int y=yDeb; y<yDeb+yLenght; y++){
+				changingMap.put(new Position(x, y), world[x][y]);
+			}
+		}
+		return changingMap;
+	}
 	
-	
+	private Map<Position, WORDL_ENTITY> makeTheSimpleChangingMap(Position position){
+		Map<Position, WORDL_ENTITY> changingMap = new HashMap<Position, IEnvironnementAnalysis.WORDL_ENTITY>();
+		changingMap.put(position, world[position.getX()][position.getY()]);
+		return changingMap;
+	}
 	
 	private class EnvObservable extends Observable{
 		@Override

@@ -1,5 +1,6 @@
 package rsma.util;
 
+/* By convention 0,0 is up left*/
 public class Position {
 	private int x;
 	private int y;
