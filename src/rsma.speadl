@@ -11,12 +11,6 @@ namespace rsma{
 		requires shedulerSMAPort : IRobotActions
 	}
 	
-	component Robot {
-		provides robotsShedulingPort : IRobotActions
-		requires robotsLookAtEnvPort : IEnvironnementAnalysis
-		requires robotsActsToEnvPort : IEnvironnementActions
-	}
-	
 	component Environnement {
 		provides envLookAtPort : IEnvironnementAnalysis
 		provides envActions : IEnvironnementActions
@@ -24,36 +18,53 @@ namespace rsma{
 	}
 	
 	component GUI {
-		provides guiWarehousePort : IEnvironnementObservable
+		requires guiWarehousePort : IEnvironnementObservable
+		//provides guiLauch : IGUI
+	}
+	
+	ecosystem EcoJoining {
+	 	requires prxLookAtPort : IEnvironnementAnalysis
+	 	requires prxActions : IEnvironnementActions
+	 	species JoiningEntity {
+	 		provides joinEnvAnalyse : IEnvironnementAnalysis
+	 		provides joinActions : IEnvironnementActions
+	 	}	 	
+	 } 
+	
+	ecosystem Robots {
+		requires pEnvAction : IEnvironnementActions
+		requires pEnvLookAt : IEnvironnementAnalysis
+		
+		//part pEnv : Environnement //part environment but we use a join ecosystem
+		part pJoin : EcoJoining{ //use the join environment
+			bind prxActions to pEnvAction
+			bind prxLookAtPort to pEnvLookAt
+		}
+		
+		species Robot(id : String) {
+			use joinEntityLocal : pJoin.JoiningEntity
+			provides roboActionPort : IRobotActions
+		}
+		provides robotsShedulingPort : IRobotActions
+		
 	}
 	
 	component Warehouse{
-		provides warehouseObservablePort : IWarehouseActions 
-		
-		part sheduler : Sheduler {
+		part environnement : Environnement
+
+		part robots : Robots{
+			bind pEnvAction to environnement.envActions
+			bind pEnvLookAt to environnement.envLookAtPort
+		}
+		part sheduler : Sheduler{
 			bind shedulerSMAPort to robots.robotsShedulingPort
 		}
 		
-		part robots : Robot {
-			bind robotsLookAtEnvPort to environnement.envLookAtPort
-			bind robotsActsToEnvPort to environnement.envActions
-		}
+		provides warehouseActionPort : IWarehouseActions  = sheduler.shedulerLaunchPort
 		
-		part environnement : Environnement {}
+		provides envActionsPort : IEnvironnementActions = environnement.envActions
+		provides envObservablePort : IEnvironnementObservable = environnement.envObservable
+		
 	}
-	
-/*	ecosystem Robots
-	{
-		
-		provides robotsShedulingPort : ISchedulingSMA
-		requires robotsLookAtEnvPort : IEnvironnementLookAt
-		requires robotsActsToEnvPort : IEnvironnementActions
-		
-		species Robot {
-			
-		}
-	}*/
-	
-	
 	
 }

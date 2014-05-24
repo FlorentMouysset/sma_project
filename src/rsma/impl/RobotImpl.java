@@ -1,13 +1,36 @@
 package rsma.impl;
 
-import rsma.Robot;
+import rsma.Robots.Robot;
+import rsma.impl.EnvironnementImpl.WORDL_ENTITY;
 import rsma.interfaces.IRobotActions;
+import rsma.util.Position;
 
 public class RobotImpl extends Robot{
-
-	@Override
-	protected IRobotActions make_robotsShedulingPort() {
-		return null;
+	private final String id;
+	
+	
+	public RobotImpl(String id){
+		this.id = id;
 	}
-
+	
+	@Override
+	protected IRobotActions make_roboActionPort() {
+		return new IRobotActions() {
+			
+			@Override
+			public void doCycle() {
+				// TODO Auto-generated method stub
+				// Pour damien ...
+				
+				//exemple d'utilisation
+				System.out.println("Le robot "+ id +" fait un cyle.\nIl fait un appel sur l'environnement");
+				WORDL_ENTITY we = eco_requires().pEnvLookAt().getWordEntityAt(new Position(0, 0));
+				
+				System.out.println("Le robot "+ id +" va bouger");
+				eco_requires().pEnvAction().moveRobot(new Position(0, 0), new Position(1, 1));
+				
+				System.out.println("Le robot a regardé l'environnement a la position 0 0 il y a " + we + " terminé \n");
+			}
+		};
+	}
 }

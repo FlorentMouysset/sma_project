@@ -11,8 +11,9 @@ public class ShedulerImpl extends Sheduler{
 			
 			@Override
 			public void launchArrangement(int nbRobots) {
-				// TODO Auto-generated method stub
-				
+				System.out.println("Le sheduler doit faire un cyle");
+				requires().shedulerSMAPort().doCycle();
+				System.out.println("Le sheduler a fait un cyle : fin");
 			}
 		};
 	}
