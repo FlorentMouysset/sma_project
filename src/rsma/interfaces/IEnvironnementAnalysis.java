@@ -1,24 +1,27 @@
 package rsma.interfaces;
 
+import java.awt.Rectangle;
+
 import rsma.util.Position;
 
 public interface IEnvironnementAnalysis {
 
-	public enum WORDL_ENTITY {EMPTY, WALL, RESOURCE, ROBOT, ROBOT_AND_RESOURCE /*, PLACE_PULL, PUSH_RESOURCE*/}
+	/**The different entity perceptible by the robots*/
+	public enum WORDL_ENTITY {EMPTY, WALL, RESOURCE, ROBOT, ROBOT_AND_RESOURCE}
 
 	/**Return the WORDL_ENTITY of a position */
 	WORDL_ENTITY getWordEntityAt(Position position);
 	
 	/**
-	 * return the position of the pull zone. The position is the up corner left.
+	 * return the Rectangle of the pull zone.
 	 * 
 	 * */
-	Position getPositionOfPullZone();
+	Rectangle getPullZone();
 	
 	/**
-	 * return the position of the push zone. The position is the up corner right.
+	 * return the Rectangle of the push zone.
 	 * 
 	 * */
-	Position getPositionOfPushZone();
+	Rectangle getPushZone();
 	
 }

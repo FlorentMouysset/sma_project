@@ -6,11 +6,13 @@ import rsma.Warehouse;
 import rsma.impl.GUIImpl;
 import rsma.impl.WarehouseImpl;
 import rsma.interfaces.IEnvironnementObservable;
+import rsma.util.ConfigurationManager;
 
 public class Main {
 
 	public static void main(String[] args) {
-		
+		ConfigurationManager.loadPropertiesFile("warehouse.properties");
+
 		//create the warehouse
 		final Warehouse.Component warehouse = (new WarehouseImpl()).newComponent();
 		

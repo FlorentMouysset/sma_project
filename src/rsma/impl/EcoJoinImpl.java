@@ -1,5 +1,7 @@
 package rsma.impl;
 
+import java.awt.Rectangle;
+
 import rsma.EcoJoining;
 import rsma.interfaces.IEnvironnementActions;
 import rsma.interfaces.IEnvironnementAnalysis;
@@ -22,13 +24,13 @@ public class EcoJoinImpl extends EcoJoining{
 					}
 
 					@Override
-					public Position getPositionOfPullZone() {
-						return eco_requires().prxLookAtPort().getPositionOfPullZone();
+					public Rectangle getPullZone() {
+						return eco_requires().prxLookAtPort().getPullZone();
 					}
 
 					@Override
-					public Position getPositionOfPushZone() {
-						return eco_requires().prxLookAtPort().getPositionOfPushZone();
+					public Rectangle getPushZone() {
+						return eco_requires().prxLookAtPort().getPushZone();
 					}
 				};
 			}
