@@ -170,7 +170,7 @@ public class EnvironnementImpl extends Environnement{
 				}else{
 					System.out.println("KO pour ce mvt, la position n'est pas vide");
 				}
-				printMatrix();
+				//printMatrix();
 
 			}
 			
@@ -201,7 +201,7 @@ public class EnvironnementImpl extends Environnement{
 				Map<Position, WORDL_ENTITY> changingMap = makeTheRectangleChanginMap(0,0,X_SIZE, Y_SIZE);
 				WarehouseChangement changement = new WarehouseChangement(changingMap);
 				
-				//carefull just notify the new observer ! So we use the direct method.
+				//Careful just notify the new observer ! So we use the direct method.
 				observer.update(envObserbableDelegate, changement);
 			}
 		};
