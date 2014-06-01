@@ -9,7 +9,36 @@ public interface IEnvironnementActions {
 	 * The robot must check if the newPosition is free.
 	 * */
 	void moveRobot(Position oldPosition , Position newPosition);
+	
+	/**
+	 * Pull a resource at the Position "position" and update the environment.</br>
+	 * No check :<br/>
+	 * <li>if the robot is on the 8-neighborhood of "position"</li>
+	 * <li>the resource is reachable</li>
+	 * <li>the resource is into the pull zone</li>
+	 * <li>the resource exist at the Position position</li>
+	 * 
+	 * @param position the Position of the resource
+	 * */
+	/*!
+	 *  FIX ME : add the position of the robot ?
+	 */
 	void pullResource(Position position);
+	
+	
+	/**
+	 * Push a resource at the Position "position" and update the environment.</br>
+	 * No check :<br/>
+	 * <li>if the robot is on the 8-neighborhood of "position"</li>
+	 * <li>the free place is reachable</li>
+	 * <li>the free place is into the push zone</li>
+	 * <li>the free place exist at the Position position</li>
+	 * 
+	 * @param position the Position of the free place
+	 * */
+	/*!
+	 *  FIX ME : add the position of the robot ?
+	 */
 	void pushResource(Position position);
 	
 	
