@@ -54,7 +54,7 @@
                   <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-rGosukcEeO22I2eqkJGXg"/>
                 </children>
                 <styles xmi:type="notation:ShapeStyle" xmi:id="_-q-s4ekcEeO22I2eqkJGXg" fontName="Cantarell" fontHeight="8"/>
-                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-q-s4ukcEeO22I2eqkJGXg" x="205" y="89" width="20" height="20"/>
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-q-s4ukcEeO22I2eqkJGXg" x="185" y="29" width="20" height="20"/>
               </children>
               <styles xmi:type="notation:SortingStyle" xmi:id="_d5nUIekSEeO_Caeffzpe9A"/>
               <styles xmi:type="notation:FilteringStyle" xmi:id="_d5nUIukSEeO_Caeffzpe9A"/>
@@ -348,6 +348,9 @@
         <ownedDiagramElements xmi:type="viewpoint:DNode" xmi:id="_-bopUOkcEeO22I2eqkJGXg" name="Interface1" width="2" height="2">
           <target xmi:type="uml:Interface" href="model.uml#_-ZetMOkcEeO22I2eqkJGXg"/>
           <semanticElements xmi:type="uml:Interface" href="model.uml#_-ZetMOkcEeO22I2eqkJGXg"/>
+          <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
+          <arrangeConstraints>KEEP_SIZE</arrangeConstraints>
+          <arrangeConstraints>KEEP_RATIO</arrangeConstraints>
           <ownedStyle xmi:type="viewpoint:BundledImage" xmi:id="_-cY3QOkcEeO22I2eqkJGXg" showIcon="false" shape="dot">
             <labelColor xmi:type="viewpoint:RGBValues" xmi:id="_-cZeUOkcEeO22I2eqkJGXg"/>
             <description xmi:type="style:BundledImageDescription" href="platform:/plugin/org.obeonetwork.dsl.uml2.design/description/uml2.odesign#//@ownedViewpoints[name='UML%20Structural%20Modeling']/@ownedRepresentations[name='Component%20Diagram']/@defaultLayer/@nodeMappings[name='CO_ProvidedInterface']/@style"/>
