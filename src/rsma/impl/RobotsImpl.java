@@ -7,7 +7,7 @@ import java.util.Random;
 import rsma.EcoJoining;
 import rsma.Robots;
 import rsma.interfaces.IRobotActions;
-import rsma.interfaces.IEnvironnementAnalysis.WORDL_ENTITY;
+import rsma.interfaces.IEnvironnementAnalysis.WORLD_ENTITY;
 import rsma.util.ConfigurationManager;
 import rsma.util.Position;
 
@@ -38,7 +38,7 @@ public class RobotsImpl extends Robots{
 			x = genRand.nextInt(x_size);
 			y = genRand.nextInt(y_size);
 			position = new Position(x, y);
-		}while(!requires().pEnvLookAt().getWordEntityAt(position).equals(WORDL_ENTITY.EMPTY)); //POF ! Fix Me ??
+		}while(!requires().pEnvLookAt().getWorldEntityAt(position).equals(WORLD_ENTITY.EMPTY)); //POF ! Fix Me ??
 		return position;
 	}
 	

@@ -9,7 +9,7 @@ import java.util.Observer;
 import rsma.Environnement;
 import rsma.interfaces.IEnvironnementActions;
 import rsma.interfaces.IEnvironnementAnalysis;
-import rsma.interfaces.IEnvironnementAnalysis.WORDL_ENTITY;
+import rsma.interfaces.IEnvironnementAnalysis.WORLD_ENTITY;
 import rsma.interfaces.IEnvironnementObservable;
 import rsma.util.ConfigurationManager;
 import rsma.util.Position;
@@ -22,7 +22,7 @@ public class EnvironnementImpl extends Environnement{
 	private static int Y_SIZE;
 
 	/**the world is a WORDL_ENTITY matrix, use the  X, Y convention*/
-	private WORDL_ENTITY[][] world;
+	private WORLD_ENTITY[][] world;
 	
 	// because we cannot extends Observable too, we create a delegate
 	private EnvObservable envObserbableDelegate = new EnvObservable();
@@ -35,29 +35,29 @@ public class EnvironnementImpl extends Environnement{
 		System.out.println("ENV : Start Environnement");
 		X_SIZE = Integer.parseInt(ConfigurationManager.getProperty("WAREHOUSE_X_LENGHT"));
 		Y_SIZE = Integer.parseInt(ConfigurationManager.getProperty("WAREHOUSE_Y_LENGHT"));
-		world = new WORDL_ENTITY[X_SIZE][Y_SIZE]; //init the matrix
+		world = new WORLD_ENTITY[X_SIZE][Y_SIZE]; //init the matrix
 		
 		/**Initialized the matrix with a logical value, is not a optimized algorithm*/
 		
 		//fill by empty
-		fillTheMatrixByEntity(1, X_SIZE-1, 1, Y_SIZE-1, WORDL_ENTITY.EMPTY);
+		fillTheMatrixByEntity(1, X_SIZE-1, 1, Y_SIZE-1, WORLD_ENTITY.EMPTY);
 		//make the border
-		fillTheMatrixByEntity(0, X_SIZE, 0, 1, WORDL_ENTITY.WALL); //the up border
-		fillTheMatrixByEntity(0, 1, 0, Y_SIZE-1, WORDL_ENTITY.WALL); //the left border
-		fillTheMatrixByEntity(0, X_SIZE, Y_SIZE-1, Y_SIZE, WORDL_ENTITY.WALL); //the bottom border
-		fillTheMatrixByEntity(X_SIZE-1, X_SIZE, 0, Y_SIZE-1, WORDL_ENTITY.WALL); //the right border
+		fillTheMatrixByEntity(0, X_SIZE, 0, 1, WORLD_ENTITY.WALL); //the up border
+		fillTheMatrixByEntity(0, 1, 0, Y_SIZE-1, WORLD_ENTITY.WALL); //the left border
+		fillTheMatrixByEntity(0, X_SIZE, Y_SIZE-1, Y_SIZE, WORLD_ENTITY.WALL); //the bottom border
+		fillTheMatrixByEntity(X_SIZE-1, X_SIZE, 0, Y_SIZE-1, WORLD_ENTITY.WALL); //the right border
 		
 		//make the middle wall
 		int middleWallXStart = Integer.parseInt(ConfigurationManager.getProperty("MIDDLE_WALL_X_START"));
 		int middleWallXStop = Integer.parseInt(ConfigurationManager.getProperty("MIDDLE_WALL_X_STOP"));
-		fillTheMatrixByEntity(middleWallXStart, middleWallXStop, 0, Y_SIZE,WORDL_ENTITY.WALL);
+		fillTheMatrixByEntity(middleWallXStart, middleWallXStop, 0, Y_SIZE,WORLD_ENTITY.WALL);
 		
 		//make the lanes
 		yLanes = new int[2];
 		yLanes[0] = Integer.parseInt(ConfigurationManager.getProperty("LANE_Y_1"));
 		yLanes[1] = Integer.parseInt(ConfigurationManager.getProperty("LANE_Y_2"));
 		for(int nbLane : yLanes){
-			fillTheMatrixByEntity(middleWallXStart, middleWallXStop, nbLane-1, nbLane, WORDL_ENTITY.EMPTY);
+			fillTheMatrixByEntity(middleWallXStart, middleWallXStop, nbLane-1, nbLane, WORLD_ENTITY.EMPTY);
 		}
 		
 		//make the pull/push zones
@@ -67,7 +67,7 @@ public class EnvironnementImpl extends Environnement{
 		int pullXLenght = Integer.parseInt(ConfigurationManager.getProperty("PULL_ZONE_X_LENGHT"));
 		int pullYLenght= Integer.parseInt(ConfigurationManager.getProperty("PULL_ZONE_Y_LENGHT"));
 		pullZone = new Rectangle(pullXStart, pullYStart, pullXLenght, pullYLenght);
-		fillTheMatrixByEntity(pullXStart, pullXLenght, pullYStart, pullYLenght, WORDL_ENTITY.RESOURCE);
+		fillTheMatrixByEntity(pullXStart, pullXLenght, pullYStart, pullYLenght, WORLD_ENTITY.RESOURCE);
 		//the push zone
 		int pushXStart = Integer.parseInt(ConfigurationManager.getProperty("PUSH_ZONE_X_START"));
 		int pushYStart = Integer.parseInt(ConfigurationManager.getProperty("PUSH_ZONE_Y_START"));
@@ -77,7 +77,7 @@ public class EnvironnementImpl extends Environnement{
 		printMatrix();
 	};
 	
-	private void fillTheMatrixByEntity(int xStart, int xLenght, int yStart, int yLenght, WORDL_ENTITY entity){
+	private void fillTheMatrixByEntity(int xStart, int xLenght, int yStart, int yLenght, WORLD_ENTITY entity){
 		for(int y=yStart; y<yLenght; y++){
 			for(int x = xStart; x<xLenght; x++){
 				world[x][y] = entity;
@@ -122,7 +122,7 @@ public class EnvironnementImpl extends Environnement{
 		return new IEnvironnementAnalysis() {
 
 			@Override
-			public WORDL_ENTITY getWordEntityAt(Position position) {
+			public WORLD_ENTITY getWorldEntityAt(Position position) {
 				System.out.println("ENV : quelqu'un fait un get à " + position + " il y a "+ world[position.getX()][position.getY()]);
 				return world[position.getX()][position.getY()];
 			}
@@ -145,25 +145,25 @@ public class EnvironnementImpl extends Environnement{
 			
 			@Override
 			public void pushResource(Position position) {
-				world[position.getX()][position.getY()] = WORDL_ENTITY.RESOURCE;
+				world[position.getX()][position.getY()] = WORLD_ENTITY.RESOURCE;
 				notifyChangement(new WarehouseChangement(makeTheSimpleChangingMap(position)));
 			}
 			
 			@Override
 			public void pullResource(Position position) {
-				world[position.getX()][position.getY()] = WORDL_ENTITY.EMPTY;
+				world[position.getX()][position.getY()] = WORLD_ENTITY.EMPTY;
 				notifyChangement(new WarehouseChangement(makeTheSimpleChangingMap(position)));
 			}
 			
 			@Override
 			public void moveRobot(Position oldPosition, Position newPosition) {
 				System.out.println("ENV : un robot bouge de " + oldPosition +" à " + newPosition );
-				if(world[newPosition.getX()][newPosition.getY()]== WORDL_ENTITY.EMPTY){//TODO 
-					WORDL_ENTITY oldRobot = world[oldPosition.getX()][oldPosition.getY()];
-					world[oldPosition.getX()][oldPosition.getY()] = WORDL_ENTITY.EMPTY;
+				if(world[newPosition.getX()][newPosition.getY()]== WORLD_ENTITY.EMPTY){//TODO 
+					WORLD_ENTITY oldRobot = world[oldPosition.getX()][oldPosition.getY()];
+					world[oldPosition.getX()][oldPosition.getY()] = WORLD_ENTITY.EMPTY;
 					world[newPosition.getX()][newPosition.getY()] = oldRobot;
 					
-					Map<Position, WORDL_ENTITY> changingMap = makeTheSimpleChangingMap(oldPosition);
+					Map<Position, WORLD_ENTITY> changingMap = makeTheSimpleChangingMap(oldPosition);
 					changingMap.putAll(makeTheSimpleChangingMap(newPosition));
 					notifyChangement(new WarehouseChangement(changingMap));
 					System.out.println("Ok pour ce deplacement");
@@ -198,7 +198,7 @@ public class EnvironnementImpl extends Environnement{
 				envObserbableDelegate.addObserver(observer);
 				
 				//make the changing map = all the world because is the new observer
-				Map<Position, WORDL_ENTITY> changingMap = makeTheRectangleChanginMap(0,0,X_SIZE, Y_SIZE);
+				Map<Position, WORLD_ENTITY> changingMap = makeTheRectangleChanginMap(0,0,X_SIZE, Y_SIZE);
 				WarehouseChangement changement = new WarehouseChangement(changingMap);
 				
 				//Careful just notify the new observer ! So we use the direct method.
@@ -212,8 +212,8 @@ public class EnvironnementImpl extends Environnement{
 	 * @param xDeb yDeb the position to start the rectangle zone.
 	 * By convention 0,0 is up left
 	 */
-	private Map<Position, WORDL_ENTITY> makeTheRectangleChanginMap(int xDeb, int yDeb, int xLenght, int yLenght){
-		Map<Position, WORDL_ENTITY> changingMap = new HashMap<Position, IEnvironnementAnalysis.WORDL_ENTITY>();
+	private Map<Position, WORLD_ENTITY> makeTheRectangleChanginMap(int xDeb, int yDeb, int xLenght, int yLenght){
+		Map<Position, WORLD_ENTITY> changingMap = new HashMap<Position, IEnvironnementAnalysis.WORLD_ENTITY>();
 		for(int x=xDeb; x<xDeb+xLenght ; x++){
 			for(int y=yDeb; y<yDeb+yLenght; y++){
 				changingMap.put(new Position(x, y), world[x][y]);
@@ -222,8 +222,8 @@ public class EnvironnementImpl extends Environnement{
 		return changingMap;
 	}
 	
-	private Map<Position, WORDL_ENTITY> makeTheSimpleChangingMap(Position position){
-		Map<Position, WORDL_ENTITY> changingMap = new HashMap<Position, IEnvironnementAnalysis.WORDL_ENTITY>();
+	private Map<Position, WORLD_ENTITY> makeTheSimpleChangingMap(Position position){
+		Map<Position, WORLD_ENTITY> changingMap = new HashMap<Position, IEnvironnementAnalysis.WORLD_ENTITY>();
 		changingMap.put(position, world[position.getX()][position.getY()]);
 		return changingMap;
 	}
