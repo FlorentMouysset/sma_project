@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="20110701" xmlns:xmi="http://www.omg.org/spec/XMI/20110701" xmlns:uml="http://www.eclipse.org/uml2/4.0.0/UML" xmi:id="_KIy9MOjfEeO_Caeffzpe9A" name="NewModel">
+  <packagedElement xmi:type="uml:Component" xmi:id="_d0-rwOkSEeO_Caeffzpe9A" clientDependency="_LQnjQOkTEeO_Caeffzpe9A _DHcAMOkUEeO_Caeffzpe9A _Wj_bUOkbEeO22I2eqkJGXg _gZa9cOkdEeO22I2eqkJGXg _hY-9AOkdEeO22I2eqkJGXg" name="Warehouse">
+    <ownedAttribute xmi:type="uml:Port" xmi:id="_C8ZDQOkTEeO_Caeffzpe9A" clientDependency="_LQnjQOkTEeO_Caeffzpe9A" name="envObservablePort" type="_nZg9EOkSEeO_Caeffzpe9A" aggregation="composite" isConjugated="true"/>
+    <ownedAttribute xmi:type="uml:Port" xmi:id="_ollSIOkTEeO_Caeffzpe9A" clientDependency="_DHcAMOkUEeO_Caeffzpe9A" name="envActionsPort" visibility="public" type="_y9ycEOkTEeO_Caeffzpe9A" aggregation="composite" isConjugated="true"/>
+    <ownedAttribute xmi:type="uml:Port" xmi:id="_HHjmsOkUEeO_Caeffzpe9A" clientDependency="_Wj_bUOkbEeO22I2eqkJGXg _gZa9cOkdEeO22I2eqkJGXg _hY-9AOkdEeO22I2eqkJGXg" name="warehouseActionPort" type="_L7OKAOkUEeO_Caeffzpe9A" aggregation="shared"/>
+    <ownedConnector xmi:id="_ZOEVkOkTEeO_Caeffzpe9A" clientDependency="_LQnjQOkTEeO_Caeffzpe9A _AosiUOkTEeO_Caeffzpe9A" name="IEnvironnementObservable_IEnvironnementObservable_connector">
+      <end xmi:id="_ZOE8oOkTEeO_Caeffzpe9A" role="_C8ZDQOkTEeO_Caeffzpe9A"/>
+      <end xmi:id="_ZOE8oekTEeO_Caeffzpe9A" role="_4wSboOkSEeO_Caeffzpe9A"/>
+    </ownedConnector>
+    <interfaceRealization xmi:id="_LQnjQOkTEeO_Caeffzpe9A" name="Port1ToIEnvironnementObservable" client="_d0-rwOkSEeO_Caeffzpe9A _C8ZDQOkTEeO_Caeffzpe9A _ZOEVkOkTEeO_Caeffzpe9A" supplier="_nZg9EOkSEeO_Caeffzpe9A" contract="_nZg9EOkSEeO_Caeffzpe9A"/>
+    <interfaceRealization xmi:id="_DHcAMOkUEeO_Caeffzpe9A" name="envActionsPortToIEnvironnementActions" client="_d0-rwOkSEeO_Caeffzpe9A _ollSIOkTEeO_Caeffzpe9A" supplier="_y9ycEOkTEeO_Caeffzpe9A" contract="_y9ycEOkTEeO_Caeffzpe9A"/>
+    <interfaceRealization xmi:id="_Wj_bUOkbEeO22I2eqkJGXg" name="warehouseActionPortToIWarehouseActions" client="_d0-rwOkSEeO_Caeffzpe9A _HHjmsOkUEeO_Caeffzpe9A" supplier="_L7OKAOkUEeO_Caeffzpe9A" contract="_L7OKAOkUEeO_Caeffzpe9A"/>
+    <packagedElement xmi:type="uml:Component" xmi:id="_faIZwOkUEeO_Caeffzpe9A" name="Sheduler">
+      <ownedAttribute xmi:type="uml:Port" xmi:id="_PumNoOkXEeO_Caeffzpe9A" name="shedulerLaunchPort" type="_L7OKAOkUEeO_Caeffzpe9A"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Interface" xmi:id="_-ZetMOkcEeO22I2eqkJGXg" name="Interface1"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Component" xmi:id="_ibEGEOkSEeO_Caeffzpe9A" name="GUI">
+    <ownedAttribute xmi:type="uml:Port" xmi:id="_4wSboOkSEeO_Caeffzpe9A" clientDependency="_AosiUOkTEeO_Caeffzpe9A" name="guiWarehousePort" type="_nZg9EOkSEeO_Caeffzpe9A" aggregation="composite" isConjugated="true"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_nZg9EOkSEeO_Caeffzpe9A" clientDependency="_AosiUOkTEeO_Caeffzpe9A" name="IEnvironnementObservable"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_AosiUOkTEeO_Caeffzpe9A" name="IEnvironnementObservableToIEnvironnementObservable" visibility="package" client="_nZg9EOkSEeO_Caeffzpe9A _4wSboOkSEeO_Caeffzpe9A _ZOEVkOkTEeO_Caeffzpe9A" supplier="_nZg9EOkSEeO_Caeffzpe9A"/>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_y9ycEOkTEeO_Caeffzpe9A" name="IEnvironnementActions"/>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_L7OKAOkUEeO_Caeffzpe9A" name="IWarehouseActions"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_gZa9cOkdEeO22I2eqkJGXg" name="Interface1TowarehouseActionPort" client="_d0-rwOkSEeO_Caeffzpe9A _HHjmsOkUEeO_Caeffzpe9A" supplier="_-ZetMOkcEeO22I2eqkJGXg"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_hY-9AOkdEeO22I2eqkJGXg" name="Interface1TowarehouseActionPort" client="_d0-rwOkSEeO_Caeffzpe9A _HHjmsOkUEeO_Caeffzpe9A" supplier="_-ZetMOkcEeO22I2eqkJGXg"/>
+</uml:Model>
