@@ -1,7 +1,7 @@
 package rsma.impl;
 
 import rsma.Robots.Robot;
-import rsma.interfaces.IEnvironnementAnalysis.WORDL_ENTITY;
+import rsma.interfaces.IEnvironnementAnalysis.WORLD_ENTITY;
 import rsma.interfaces.IRobotActions;
 import rsma.util.Position;
 
@@ -25,7 +25,7 @@ public class RobotImpl extends Robot{
 				
 				//exemple d'utilisation
 				System.out.println("Le robot "+ id +" fait un cyle.\nIl fait un appel sur l'environnement");
-				WORDL_ENTITY we = eco_requires().pEnvLookAt().getWordEntityAt(new Position(0, 0));
+				WORLD_ENTITY we = eco_requires().pEnvLookAt().getWorldEntityAt(new Position(0, 0));
 				
 				System.out.println("Le robot "+ id +" va bouger");
 				eco_requires().pEnvAction().moveRobot(new Position(0, 0), new Position(1, 1));

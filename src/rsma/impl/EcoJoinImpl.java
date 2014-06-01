@@ -18,9 +18,9 @@ public class EcoJoinImpl extends EcoJoining{
 				return new IEnvironnementAnalysis() {
 					
 					@Override
-					public WORDL_ENTITY getWordEntityAt(Position position) {
+					public WORLD_ENTITY getWorldEntityAt(Position position) {
 						System.out.println("Join LookAt " + position);
-						return eco_requires().prxLookAtPort().getWordEntityAt(position);
+						return eco_requires().prxLookAtPort().getWorldEntityAt(position);
 					}
 
 					@Override

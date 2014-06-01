@@ -5,7 +5,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import rsma.GUI;
-import rsma.interfaces.IEnvironnementAnalysis.WORDL_ENTITY;
+import rsma.interfaces.IEnvironnementAnalysis.WORLD_ENTITY;
 import rsma.util.Position;
 import rsma.util.WarehouseChangement;
 
@@ -27,9 +27,9 @@ public class GUIImpl extends GUI {
 	
 	private void changementIsPush(WarehouseChangement change){
 		System.out.println("GUI update");
-		for(Entry<Position, WORDL_ENTITY> entry : change.getMap().entrySet()){
+		for(Entry<Position, WORLD_ENTITY> entry : change.getMap().entrySet()){
 			Position position = entry.getKey();
-			WORDL_ENTITY we = entry.getValue();
+			WORLD_ENTITY we = entry.getValue();
 			//Oudom TODO
 		}
 	}
