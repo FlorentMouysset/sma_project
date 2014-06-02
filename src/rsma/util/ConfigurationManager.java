@@ -28,8 +28,7 @@ public class ConfigurationManager {
 		try {
 			 in = cm.getClass().getClassLoader().getResourceAsStream(propFile);
 			
-			//in = new FileInputStream(url);
-			cm.prop.load(in);; //TODO check ecrasement
+			cm.prop.load(in);
 			in.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

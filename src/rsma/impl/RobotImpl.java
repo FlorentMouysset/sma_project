@@ -1,5 +1,7 @@
 package rsma.impl;
 
+import java.awt.Rectangle;
+
 import rsma.Robots.Robot;
 import rsma.interfaces.IEnvironnementAnalysis.WORLD_ENTITY;
 import rsma.interfaces.IRobotActions;
@@ -8,10 +10,16 @@ import rsma.util.Position;
 public class RobotImpl extends Robot{
 	private final String id;
 	private Position currentPosition;
+	private Rectangle pullZone;
+	private Rectangle pushZone;
 	
-	public RobotImpl(String id, Position positionInit){
+	
+	public RobotImpl(String id, Position positionInit, Rectangle pullZone, Rectangle pushZone){
 		this.id = id;
 		this.currentPosition = positionInit;
+		this.pullZone = pullZone;
+		this.pushZone = pushZone;
+		
 	}
 	
 	@Override

@@ -40,13 +40,13 @@ public class EcoJoinImpl extends EcoJoining{
 				return new IEnvironnementActions() {
 					
 					@Override
-					public void pushResource(Position position) {
-						eco_requires().prxActions().pushResource(position);
+					public void pushResource(Position freePlacePost, Position robotPost) {
+						eco_requires().prxActions().pushResource(freePlacePost, robotPost);
 					}
 					
 					@Override
-					public void pullResource(Position position) {
-						eco_requires().prxActions().pullResource(position);
+					public void pullResource(Position resrcPost, Position robotPost) {
+						eco_requires().prxActions().pullResource(resrcPost, robotPost);
 					}
 					
 					@Override
@@ -59,6 +59,11 @@ public class EcoJoinImpl extends EcoJoining{
 						System.out.println("** WARNING **");
 						System.out.println("Les robots n'ont pas le droit de bouger le couloir !");
 						//eco_requires().prxActions().moveLane();
+					}
+
+					@Override
+					public void addRobot(Position robotPost) {
+						eco_requires().prxActions().addRobot(robotPost);
 					}
 				};
 			}

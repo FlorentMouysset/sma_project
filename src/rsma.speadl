@@ -4,6 +4,7 @@ import rsma.interfaces.IEnvironnementAnalysis
 import rsma.interfaces.IRobotActions
 import rsma.interfaces.IWarehouseActions
 import rsma.util.Position
+import java.awt.Rectangle
 
 namespace rsma{
 	
@@ -42,7 +43,7 @@ namespace rsma{
 			bind prxLookAtPort to pEnvLookAt
 		}
 		
-		species Robot(id : String, positionInit : Position) {
+		species Robot(id : String, positionInit : Position, pullZone : Rectangle, pushZone : Rectangle) {
 			use joinEntityLocal : pJoin.JoiningEntity
 			provides roboActionPort : IRobotActions
 		}

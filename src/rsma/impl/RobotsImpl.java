@@ -1,13 +1,14 @@
 package rsma.impl;
 
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import rsma.EcoJoining;
 import rsma.Robots;
-import rsma.interfaces.IRobotActions;
 import rsma.interfaces.IEnvironnementAnalysis.WORLD_ENTITY;
+import rsma.interfaces.IRobotActions;
 import rsma.util.ConfigurationManager;
 import rsma.util.Position;
 
@@ -23,10 +24,12 @@ public class RobotsImpl extends Robots{
 		int nbrobotsStart = Integer.parseInt(ConfigurationManager.getProperty("NB_ROBOTS_START"));
 		int x_size = Integer.parseInt(ConfigurationManager.getProperty("WAREHOUSE_X_LENGHT"));
 		int y_size = Integer.parseInt(ConfigurationManager.getProperty("WAREHOUSE_Y_LENGHT"));
+		Rectangle pullZone = requires().pEnvLookAt().getPullZone();
+		Rectangle pushZone = requires().pEnvLookAt().getPushZone();
 		for(int i=0; i<nbrobotsStart; i++){
 			System.out.println("création du robots :" + i);
 			Position position = getAFreePlace(x_size, y_size); 
-			robotList.add(newRobot(i+"", position));
+			robotList.add(newRobot(i+"", position, pullZone, pushZone));
 			//TODO put the robot into environment
 		}
 	};
@@ -62,8 +65,8 @@ public class RobotsImpl extends Robots{
 	}
 
 	@Override
-	protected Robot make_Robot(String id, Position positionInit) {
-		return new RobotImpl(id, positionInit);
+	protected Robot make_Robot(String id, Position positionInit, Rectangle pullZone, Rectangle pushZone) {
+		return new RobotImpl(id, positionInit, pullZone, pushZone);
 	}
 
 

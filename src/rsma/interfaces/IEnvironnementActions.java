@@ -18,12 +18,10 @@ public interface IEnvironnementActions {
 	 * <li>the resource is into the pull zone</li>
 	 * <li>the resource exist at the Position position</li>
 	 * 
-	 * @param position the Position of the resource
+	 * @param resrcPost the Position of the resource
+	 * @param robotPost the position of the robot
 	 * */
-	/*!
-	 *  FIX ME : add the position of the robot ?
-	 */
-	void pullResource(Position position);
+	void pullResource(Position resrcPost, Position robotPost);
 	
 	
 	/**
@@ -34,17 +32,22 @@ public interface IEnvironnementActions {
 	 * <li>the free place is into the push zone</li>
 	 * <li>the free place exist at the Position position</li>
 	 * 
-	 * @param position the Position of the free place
+	 * @param freePlacePost the Position of the free place
+	 * @param robotPost the position of the robot
 	 * */
-	/*!
-	 *  FIX ME : add the position of the robot ?
-	 */
-	void pushResource(Position position);
-	
+	void pushResource(Position freePlacePost, Position robotPost);
 	
 	/**Move the lane from the old high to the new high. </br>
 	 * All robots into the lane are kill.
 	 * @param laneId 0 or 1*/
 	void moveLane(int laneId,  int newHigh);
+	
+	/**
+	 * Add into the environment a new empty robot at position.
+	 * No check if the position is a free place
+	 * 
+	 * @param robotPost the position of the new robot
+	 * */
+	void addRobot(Position robotPost);
 	
 }

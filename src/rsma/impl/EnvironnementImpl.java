@@ -144,15 +144,21 @@ public class EnvironnementImpl extends Environnement{
 		return new IEnvironnementActions() {
 			
 			@Override
-			public void pushResource(Position position) {
-				world[position.getX()][position.getY()] = WORLD_ENTITY.RESOURCE;
-				notifyChangement(new WarehouseChangement(makeTheSimpleChangingMap(position)));
+			public void pushResource(Position freePlacePost, Position robotPost) {
+				world[freePlacePost.getX()][freePlacePost.getY()] = WORLD_ENTITY.RESOURCE;
+				world[robotPost.getX()][robotPost.getY()] = WORLD_ENTITY.ROBOT;
+				Map<Position, WORLD_ENTITY> changeMap = makeTheSimpleChangingMap(freePlacePost);
+				changeMap.putAll(makeTheSimpleChangingMap(robotPost));
+				notifyChangement(new WarehouseChangement(changeMap));
 			}
 			
 			@Override
-			public void pullResource(Position position) {
-				world[position.getX()][position.getY()] = WORLD_ENTITY.EMPTY;
-				notifyChangement(new WarehouseChangement(makeTheSimpleChangingMap(position)));
+			public void pullResource(Position resrcPost, Position robotPost) {
+				world[resrcPost.getX()][resrcPost.getY()] = WORLD_ENTITY.EMPTY;
+				world[robotPost.getX()][robotPost.getY()] = WORLD_ENTITY.ROBOT_AND_RESOURCE;
+				Map<Position, WORLD_ENTITY> changeMap = makeTheSimpleChangingMap(resrcPost);
+				changeMap.putAll(makeTheSimpleChangingMap(robotPost));
+				notifyChangement(new WarehouseChangement(changeMap));
 			}
 			
 			@Override
@@ -185,6 +191,12 @@ public class EnvironnementImpl extends Environnement{
 			private void notifyChangement(WarehouseChangement change){
 				envObserbableDelegate.setChanged();
 				envObserbableDelegate.notifyObservers(change);
+			}
+
+			@Override
+			public void addRobot(Position robotPost) {
+				world[robotPost.getX()][robotPost.getY()] = WORLD_ENTITY.ROBOT;
+				notifyChangement(new WarehouseChangement(makeTheSimpleChangingMap(robotPost)));
 			}
 		};
 	}

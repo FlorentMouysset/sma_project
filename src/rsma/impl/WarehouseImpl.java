@@ -4,7 +4,6 @@ import rsma.Environnement;
 import rsma.Robots;
 import rsma.Sheduler;
 import rsma.Warehouse;
-import rsma.util.ConfigurationManager;
 
 public class WarehouseImpl extends Warehouse{
 
