@@ -50,11 +50,18 @@ public class RobotsImpl extends Robots{
 		return new IRobotActions() {
 			
 			@Override
-			public void doCycle() {
+			public boolean doCycle() {
+				List<Robot.Component> robotListSuicide = new ArrayList<Robot.Component>();
+				boolean result;
 				for(Robot.Component robot : robotList){
 					System.out.println("ECO robots : lancement d'un clycle pour un robot");
-					robot.roboActionPort().doCycle();
+					result = robot.roboActionPort().doCycle();
+					if(result){
+						robotListSuicide.add(robot);
+					}
 				}
+				robotList.removeAll(robotListSuicide);
+				return !robotListSuicide.isEmpty();
 			}
 		};
 	}

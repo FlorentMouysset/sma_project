@@ -2,7 +2,11 @@ package rsma.interfaces;
 
 public interface IRobotActions {
 
-	void doCycle();
+	/**
+	 * Make a cycle into the Robot.
+	 * @return true if the agent is still alive, false is the agent has suicide.
+	 * */
+	boolean doCycle();
 	
 	
 }
