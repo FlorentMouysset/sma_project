@@ -7,13 +7,17 @@ import java.util.Map;
 import rsma.Robots.Robot;
 import rsma.interfaces.IEnvironnementAnalysis.WORLD_ENTITY;
 import rsma.interfaces.IRobotActions;
+import rsma.util.ConfigurationManager;
 import rsma.util.Position;
 
 public class RobotImpl extends Robot{
 	private final String id;
+	private static Rectangle pullZone;
+	private static Rectangle pushZone;
+	private static int X_MAX;
+	private static int Y_MAX;
+	
 	private Position currentPosition;
-	private Rectangle pullZone;
-	private Rectangle pushZone;
 	private INTERNAL_STATE state = INTERNAL_STATE.NORMAL;
 	private INTERNAL_AIM aim = INTERNAL_AIM.PULL_AIM;
 	private Map<INTERNAL_LANE_STATUS, Position> laneMap = new HashMap<INTERNAL_LANE_STATUS, Position>();
@@ -27,9 +31,11 @@ public class RobotImpl extends Robot{
 	public RobotImpl(String id, Position positionInit, Rectangle pullZone, Rectangle pushZone){
 		this.id = id;
 		this.currentPosition = positionInit;
-		this.pullZone = pullZone;
-		this.pushZone = pushZone;
+		RobotImpl.pullZone = pullZone;
+		RobotImpl.pushZone = pushZone;
 		
+		RobotImpl.X_MAX = Integer.parseInt(ConfigurationManager.getProperty("WAREHOUSE_X_LENGHT"));
+		RobotImpl.Y_MAX = Integer.parseInt(ConfigurationManager.getProperty("WAREHOUSE_Y_LENGHT"));
 	}
 	
 	@Override
@@ -58,13 +64,23 @@ public class RobotImpl extends Robot{
 	private void doPerception() {
 		//init the local temp perception map
 		localTempPercep[3][3]=externalState;
-		
-		
-		WORLD_ENTITY we = eco_requires().pEnvLookAt().getWorldEntityAt(new Position(0, 0));
-		
-		
+		WORLD_ENTITY we;
+		Position posit;
+		for(int x=0; x<7; x++){
+			for(int y=0; y<7; y++){
+				posit = new Position(currentPosition.getX() - (3-x), currentPosition.getY() - (3-y));
+				if(positionIsValide(posit)){
+					we = eco_requires().pEnvLookAt().getWorldEntityAt(posit);
+				}else{
+					we = null;
+				}
+				localTempPercep[y][x] = we;
+			}
+		}
 	}
 	
+	
+
 	private void doDecision() {
 		// TODO Auto-generated method stub
 		
@@ -73,9 +89,13 @@ public class RobotImpl extends Robot{
 	private void doAction() {
 		
 		System.out.println("Le robot "+ id +" va bouger");
-		eco_requires().pEnvAction().moveRobot(new Position(0, 0), new Position(1, 1));
+		Position positEnd = new Position(currentPosition.getX()+1, currentPosition.getY()+1);
+		eco_requires().pEnvAction().moveRobot(currentPosition, positEnd);
+		currentPosition = positEnd;
 	}
 	
-	
+	private static boolean positionIsValide(Position posit) {
+		return posit.getX()>0 && posit.getY()>0 && posit.getX()<X_MAX && posit.getY()<Y_MAX;
+	}
 	
 }

@@ -11,9 +11,12 @@ public class ShedulerImpl extends Sheduler{
 			
 			@Override
 			public void launchArrangement(int nbRobots) {
-				System.out.println("Le sheduler doit faire un cyle");
-				requires().shedulerSMAPort().doCycle();
-				System.out.println("Le sheduler a fait un cyle : fin");
+				boolean result;
+				do{
+					System.out.println("Le sheduler doit faire un cyle");
+					result = requires().shedulerSMAPort().doCycle();
+					System.out.println("Le sheduler a fait un cyle : fin");
+				}while(!result);//result == true when all robot are suicide
 			}
 		};
 	}

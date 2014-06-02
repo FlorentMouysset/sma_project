@@ -61,7 +61,7 @@ public class RobotsImpl extends Robots{
 					}
 				}
 				robotList.removeAll(robotListSuicide);
-				return !robotListSuicide.isEmpty();
+				return robotList.isEmpty();
 			}
 		};
 	}

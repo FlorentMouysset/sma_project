@@ -176,7 +176,7 @@ public class EnvironnementImpl extends Environnement{
 				}else{
 					System.out.println("KO pour ce mvt, la position n'est pas vide");
 				}
-				//printMatrix();
+				printMatrix();
 
 			}
 			
