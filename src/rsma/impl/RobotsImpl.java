@@ -30,7 +30,7 @@ public class RobotsImpl extends Robots{
 			System.out.println("création du robots :" + i);
 			Position position = getAFreePlace(x_size, y_size); 
 			robotList.add(newRobot(i+"", position, pullZone, pushZone));
-			//TODO put the robot into environment
+			requires().pEnvAction().addRobot(position);
 		}
 	};
 	

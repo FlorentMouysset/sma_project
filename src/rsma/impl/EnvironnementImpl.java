@@ -195,8 +195,10 @@ public class EnvironnementImpl extends Environnement{
 
 			@Override
 			public void addRobot(Position robotPost) {
+				System.out.println("ENV : ajout d'un robot à " + robotPost );
 				world[robotPost.getX()][robotPost.getY()] = WORLD_ENTITY.ROBOT;
 				notifyChangement(new WarehouseChangement(makeTheSimpleChangingMap(robotPost)));
+				printMatrix();
 			}
 		};
 	}
