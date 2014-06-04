@@ -2,6 +2,8 @@ package rsma.gui;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -52,6 +54,11 @@ public class Frame extends JFrame implements Observer {
     }
     
     private void draw(Graphics g) {
+        // Add anti-aliasing.
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        
+        // Draw entities.
         for (Entry<Position, WORLD_ENTITY> entity : entities) {
             Position position = entity.getKey();
             switch (entity.getValue()) {
