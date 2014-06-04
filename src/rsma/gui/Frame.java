@@ -18,6 +18,7 @@ import rsma.util.WarehouseChangement;
 public class Frame extends JFrame implements Observer {
 
     private static final String TITLE = "Multi-Agent System: A Warehouse Example";
+    private static final int ENTITY_SIZE = 10;
     
     private final JPanel content;
     private Set<Entry<Position, WORLD_ENTITY>> entities;
@@ -40,7 +41,7 @@ public class Frame extends JFrame implements Observer {
         
         int width = Integer.parseInt(ConfigurationManager.getProperty("WAREHOUSE_X_LENGHT"));
         int height = Integer.parseInt(ConfigurationManager.getProperty("WAREHOUSE_X_LENGHT"));
-        content.setPreferredSize(new Dimension(width, height));
+        content.setPreferredSize(new Dimension(ENTITY_SIZE * width, ENTITY_SIZE * height));
         setContentPane(content);
     }
     
@@ -51,7 +52,24 @@ public class Frame extends JFrame implements Observer {
     }
     
     private void draw(Graphics g) {
-        // TODO
+        for (Entry<Position, WORLD_ENTITY> entity : entities) {
+            Position position = entity.getKey();
+            switch (entity.getValue()) {
+            case EMPTY:
+                break;
+            case WALL:
+                break;
+            case RESOURCE:
+                g.fillOval(position.getX(), position.getY(), ENTITY_SIZE, ENTITY_SIZE);
+                break;
+            case ROBOT:
+                break;
+            case ROBOT_AND_RESOURCE:
+                break;
+            default:
+                break;
+            }
+        }
     }
     
 }
