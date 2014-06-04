@@ -11,22 +11,23 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import rsma.interfaces.IEnvironnementAnalysis.WORLD_ENTITY;
+import rsma.util.ConfigurationManager;
 import rsma.util.Position;
 import rsma.util.WarehouseChangement;
 
 public class Frame extends JFrame implements Observer {
 
     private static final String TITLE = "Multi-Agent System: A Warehouse Example";
-    private static final int WIDTH = 750;
-    private static final int HEIGHT = 400;
     
     private final JPanel content;
     private Set<Entry<Position, WORLD_ENTITY>> entities;
     
     public Frame() {
         super(TITLE);
+        
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
+        
         content = new JPanel() {
 
             @Override
@@ -36,7 +37,10 @@ public class Frame extends JFrame implements Observer {
             }
             
         };
-        content.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        
+        int width = Integer.parseInt(ConfigurationManager.getProperty("WAREHOUSE_X_LENGHT"));
+        int height = Integer.parseInt(ConfigurationManager.getProperty("WAREHOUSE_X_LENGHT"));
+        content.setPreferredSize(new Dimension(width, height));
         setContentPane(content);
     }
     
