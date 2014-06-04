@@ -1,5 +1,6 @@
 package rsma.gui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -59,6 +60,7 @@ public class Frame extends JFrame implements Observer {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
         // Draw entities.
+        g.setColor(Color.BLACK);
         for (Entry<Position, WORLD_ENTITY> entity : entities) {
             int x = ENTITY_SIZE * entity.getKey().getX();
             int y = ENTITY_SIZE * entity.getKey().getY();
@@ -76,6 +78,9 @@ public class Frame extends JFrame implements Observer {
                 g.fillRect(x, y, ENTITY_SIZE, ENTITY_SIZE);
                 break;
             case ROBOT_AND_RESOURCE:
+                g.fillRect(x, y, ENTITY_SIZE, ENTITY_SIZE);
+                g.setColor(Color.RED);
+                g.drawRect(x, y, ENTITY_SIZE, ENTITY_SIZE);
                 break;
             default:
                 break;
