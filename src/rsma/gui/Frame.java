@@ -42,7 +42,7 @@ public class Frame extends JFrame implements Observer {
         };
         
         int width = Integer.parseInt(ConfigurationManager.getProperty("WAREHOUSE_X_LENGHT"));
-        int height = Integer.parseInt(ConfigurationManager.getProperty("WAREHOUSE_X_LENGHT"));
+        int height = Integer.parseInt(ConfigurationManager.getProperty("WAREHOUSE_Y_LENGHT"));
         content.setPreferredSize(new Dimension(ENTITY_SIZE * width, ENTITY_SIZE * height));
         setContentPane(content);
     }
@@ -60,16 +60,20 @@ public class Frame extends JFrame implements Observer {
         
         // Draw entities.
         for (Entry<Position, WORLD_ENTITY> entity : entities) {
-            Position position = entity.getKey();
+            int x = ENTITY_SIZE * entity.getKey().getX();
+            int y = ENTITY_SIZE * entity.getKey().getY();
+            
             switch (entity.getValue()) {
             case EMPTY:
                 break;
             case WALL:
+                g.fillRect(x, y, ENTITY_SIZE, ENTITY_SIZE);
                 break;
             case RESOURCE:
-                g.fillOval(position.getX(), position.getY(), ENTITY_SIZE, ENTITY_SIZE);
+                g.fillOval(x, y, ENTITY_SIZE, ENTITY_SIZE);
                 break;
             case ROBOT:
+                g.fillRect(x, y, ENTITY_SIZE, ENTITY_SIZE);
                 break;
             case ROBOT_AND_RESOURCE:
                 break;
