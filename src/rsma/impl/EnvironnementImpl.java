@@ -21,7 +21,7 @@ public class EnvironnementImpl extends Environnement{
 	private static int X_SIZE;
 	private static int Y_SIZE;
 
-	/**the world is a WORDL_ENTITY matrix, use the  X, Y convention*/
+	/**the world is a WORDL_ENTITY matrix, use the  X=col, Y=lig convention*/
 	private WORLD_ENTITY[][] world;
 	
 	// because we cannot extends Observable too, we create a delegate
@@ -35,7 +35,7 @@ public class EnvironnementImpl extends Environnement{
 		System.out.println("ENV : Start Environnement");
 		X_SIZE = Integer.parseInt(ConfigurationManager.getProperty("WAREHOUSE_X_LENGHT"));
 		Y_SIZE = Integer.parseInt(ConfigurationManager.getProperty("WAREHOUSE_Y_LENGHT"));
-		world = new WORLD_ENTITY[X_SIZE][Y_SIZE]; //init the matrix
+		world = new WORLD_ENTITY[Y_SIZE][X_SIZE]; //init the matrix
 		
 		/**Initialized the matrix with a logical value, is not a optimized algorithm*/
 		
@@ -80,7 +80,7 @@ public class EnvironnementImpl extends Environnement{
 	private void fillTheMatrixByEntity(int xStart, int xLenght, int yStart, int yLenght, WORLD_ENTITY entity){
 		for(int y=yStart; y<yLenght; y++){
 			for(int x = xStart; x<xLenght; x++){
-				world[x][y] = entity;
+				world[y][x] = entity;
 			}
 		}
 	}
@@ -90,7 +90,7 @@ public class EnvironnementImpl extends Environnement{
 		for(int y=0; y< Y_SIZE; y++){
 			for(int x = 0 ; x<X_SIZE; x++){	
 				//System.out.println("x=" + x +"  y=" + y);
-				switch (world[x][y]) {
+				switch (world[y][x]) {
 				case EMPTY:
 					car = '_';
 					break;
@@ -123,8 +123,8 @@ public class EnvironnementImpl extends Environnement{
 
 			@Override
 			public WORLD_ENTITY getWorldEntityAt(Position position) {
-			//	System.out.println("ENV : quelqu'un fait un get à " + position + " il y a "+ world[position.getX()][position.getY()]);
-				return world[position.getX()][position.getY()];
+				System.out.println("ENV : quelqu'un fait un get à " + position + " il y a "+ world[position.getY()][position.getX()]);
+				return world[position.getY()][position.getX()];
 			}
 
 			@Override
@@ -146,8 +146,8 @@ public class EnvironnementImpl extends Environnement{
 			@Override
 			public void pushResource(Position freePlacePost, Position robotPost) {
 				System.out.println("ENV : PUSH done !");
-				world[freePlacePost.getX()][freePlacePost.getY()] = WORLD_ENTITY.RESOURCE;
-				world[robotPost.getX()][robotPost.getY()] = WORLD_ENTITY.ROBOT;
+				world[freePlacePost.getY()][freePlacePost.getX()] = WORLD_ENTITY.RESOURCE;
+				world[robotPost.getY()][robotPost.getX()] = WORLD_ENTITY.ROBOT;
 				Map<Position, WORLD_ENTITY> changeMap = makeTheSimpleChangingMap(freePlacePost);
 				changeMap.putAll(makeTheSimpleChangingMap(robotPost));
 				notifyChangement(new WarehouseChangement(changeMap));
@@ -155,9 +155,9 @@ public class EnvironnementImpl extends Environnement{
 			
 			@Override
 			public void pullResource(Position resrcPost, Position robotPost) {
-				System.out.println("ENV : PULL done !");
-				world[resrcPost.getX()][resrcPost.getY()] = WORLD_ENTITY.EMPTY;
-				world[robotPost.getX()][robotPost.getY()] = WORLD_ENTITY.ROBOT_AND_RESOURCE;
+				System.out.println("ENV : PULL done !" + resrcPost + " robot =" + robotPost);
+				world[resrcPost.getY()][resrcPost.getX()] = WORLD_ENTITY.EMPTY;
+				world[robotPost.getY()][robotPost.getX()] = WORLD_ENTITY.ROBOT_AND_RESOURCE;
 				Map<Position, WORLD_ENTITY> changeMap = makeTheSimpleChangingMap(resrcPost);
 				changeMap.putAll(makeTheSimpleChangingMap(robotPost));
 				notifyChangement(new WarehouseChangement(changeMap));
@@ -166,10 +166,10 @@ public class EnvironnementImpl extends Environnement{
 			@Override
 			public void moveRobot(Position oldPosition, Position newPosition) {
 				//System.out.println("ENV : un robot bouge de " + oldPosition +" à " + newPosition );
-				if(world[newPosition.getX()][newPosition.getY()]== WORLD_ENTITY.EMPTY){//TODO 
-					WORLD_ENTITY oldRobot = world[oldPosition.getX()][oldPosition.getY()];
-					world[oldPosition.getX()][oldPosition.getY()] = WORLD_ENTITY.EMPTY;
-					world[newPosition.getX()][newPosition.getY()] = oldRobot;
+				if(world[newPosition.getY()][newPosition.getX()]== WORLD_ENTITY.EMPTY){//TODO 
+					WORLD_ENTITY oldRobot = world[oldPosition.getY()][oldPosition.getX()];
+					world[oldPosition.getY()][oldPosition.getX()] = WORLD_ENTITY.EMPTY;
+					world[newPosition.getY()][newPosition.getX()] = oldRobot;
 					
 					Map<Position, WORLD_ENTITY> changingMap = makeTheSimpleChangingMap(oldPosition);
 					changingMap.putAll(makeTheSimpleChangingMap(newPosition));
@@ -203,7 +203,7 @@ public class EnvironnementImpl extends Environnement{
 			@Override
 			public void addRobot(Position robotPost) {
 				System.out.println("ENV : ajout d'un robot à " + robotPost );
-				world[robotPost.getX()][robotPost.getY()] = WORLD_ENTITY.ROBOT;
+				world[robotPost.getY()][robotPost.getX()] = WORLD_ENTITY.ROBOT;
 				notifyChangement(new WarehouseChangement(makeTheSimpleChangingMap(robotPost)));
 				printMatrix();
 			}
@@ -237,7 +237,7 @@ public class EnvironnementImpl extends Environnement{
 		Map<Position, WORLD_ENTITY> changingMap = new HashMap<Position, IEnvironnementAnalysis.WORLD_ENTITY>();
 		for(int x=xDeb; x<xDeb+xLenght ; x++){
 			for(int y=yDeb; y<yDeb+yLenght; y++){
-				changingMap.put(new Position(x, y), world[x][y]);
+				changingMap.put(new Position(x, y), world[y][x]);
 			}
 		}
 		return changingMap;
@@ -245,7 +245,7 @@ public class EnvironnementImpl extends Environnement{
 	
 	private Map<Position, WORLD_ENTITY> makeTheSimpleChangingMap(Position position){
 		Map<Position, WORLD_ENTITY> changingMap = new HashMap<Position, IEnvironnementAnalysis.WORLD_ENTITY>();
-		changingMap.put(position, world[position.getX()][position.getY()]);
+		changingMap.put(position, world[position.getY()][position.getX()]);
 		return changingMap;
 	}
 	
