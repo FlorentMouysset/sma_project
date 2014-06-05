@@ -214,7 +214,7 @@ public class RobotImpl extends Robot{
 					state =INTERNAL_STATE.ZONE_PUSH_GO;
 				}
 			}else{
-				//TODO aller vers ressouce
+				nextPost = computeNextPositionFromFarPosition(rescPost);
 			}
 		}
 		
@@ -268,7 +268,7 @@ public class RobotImpl extends Robot{
 					state = INTERNAL_STATE.ZONE_PULL_GO;
 				}
 			}else{
-				//TODO aller vers freeplacePost
+				nextPost = computeNextPositionFromFarPosition(freePlacePost);
 			}
 		}
 		
@@ -334,7 +334,7 @@ public class RobotImpl extends Robot{
 		 *	if(isExitToLane){
 		 *		state = (aim= PULL_AIM)=> ZONEPULLGO | ZONE_PUSH_GO
 		 *		//update mapLane
-		 *		//TODO GO_PUXX_ZONE
+		 *		// GO_PUXX_ZONE
 		 *	}else if(perception.containtImediatlly(opositeRobotType) && cptCycleLaneWainting<2 ){//détection d'un robot de type opposé
 		 *		//ce robot n'est peut être pas en conflict
 		 *		action = NOTHING
@@ -361,31 +361,39 @@ public class RobotImpl extends Robot{
 		if(state.equals(INTERNAL_STATE.LANE_IN)){ //TODO refactor
 			if(perceptionCurrentPositionIsLaneExit()){
 				state = aim.equals(INTERNAL_AIM.PULL_AIM) ? INTERNAL_STATE.ZONE_PULL_GO : INTERNAL_STATE.ZONE_PUSH_GO;
-				//TODO update map lane
+				
+				Position positLaneEntrance = laneMap.get(INTERNAL_LANE_STATUS.TRY);
+				if(state.equals(INTERNAL_STATE.ZONE_PULL_GO)){
+					laneMap.put(INTERNAL_LANE_STATUS.PULL_LANE, positLaneEntrance);
+				}else{
+					laneMap.put(INTERNAL_LANE_STATUS.PUSH_LANE, positLaneEntrance);					
+				}
+				laneMap.remove(INTERNAL_LANE_STATUS.TRY);
 				//TODO refaire le bon go zone
 			}else{
-				Position position = perceptionHasEntity(aim.equals(INTERNAL_AIM.PULL_AIM)? WORLD_ENTITY.ROBOT_AND_RESOURCE : WORLD_ENTITY.ROBOT, SEARCH_PERCEPTION.FRONT);	
-				int dist = getDistance(currentPosition, position);
+				WORLD_ENTITY oppositeRobotType = aim.equals(INTERNAL_AIM.PULL_AIM)? WORLD_ENTITY.ROBOT_AND_RESOURCE : WORLD_ENTITY.ROBOT;
+				Position otherRobotPosit = perceptionHasEntity(oppositeRobotType, SEARCH_PERCEPTION.FRONT);	
+				int dist = getDistance(currentPosition, otherRobotPosit);
 				if(cptCycleLaneWainting<2 && dist==1){
 					action = INTERNAL_ACTION.NOTHING;
-					if(hadLanePriority()){
+					if(hadLanePriority(otherRobotPosit, oppositeRobotType)){
 						cptCycleLaneWainting++;
 					}else{
 						state = INTERNAL_STATE.RESIGNATION;
 						cptCycleLaneWainting = 0;
-					//TODO update lanemap
+					// update lanemap ???
 					}
 				}else if(cptCycleLaneWainting == 2){
 					state = INTERNAL_STATE.RESIGNATION;
 					cptCycleLaneWainting = 0;
-					//TODO update lanemap
+					// update lanemap ??
 				}else{
-					position = perceptionHasEntity(aim.equals(INTERNAL_AIM.PUSH_AIM)? WORLD_ENTITY.ROBOT_AND_RESOURCE : WORLD_ENTITY.ROBOT, SEARCH_PERCEPTION.FRONT);	
-					dist = getDistance(currentPosition, position);
+					otherRobotPosit = perceptionHasEntity(aim.equals(INTERNAL_AIM.PUSH_AIM)? WORLD_ENTITY.ROBOT_AND_RESOURCE : WORLD_ENTITY.ROBOT, SEARCH_PERCEPTION.FRONT);	
+					dist = getDistance(currentPosition, otherRobotPosit);
 					if(dist < 3){
 						state =INTERNAL_STATE.RESIGNATION;
 						cptCycleLaneWainting = 0;
-						//TODO update lanemap
+						// update lanemap ???
 					}else{
 						action = INTERNAL_ACTION.WALK;
 						if(aim.equals(INTERNAL_AIM.PULL_AIM)){
@@ -410,6 +418,7 @@ public class RobotImpl extends Robot{
 		if(state.equals(INTERNAL_STATE.RESIGNATION)){
 			if(perceptionCurrentPositionIsLaneExit()){
 				state = INTERNAL_STATE.FORCE;
+				laneMap.remove(INTERNAL_LANE_STATUS.TRY);
 			}else{
 				Position position = perceptionHasEntity(aim.equals(INTERNAL_AIM.PUSH_AIM)? WORLD_ENTITY.ROBOT_AND_RESOURCE : WORLD_ENTITY.ROBOT, SEARCH_PERCEPTION.FRONT);	
 				int dist = getDistance(currentPosition, position);
@@ -458,10 +467,15 @@ public class RobotImpl extends Robot{
 		
 	}
 	
-
-	private boolean hadLanePriority() {
-		// TODO Auto-generated method stub
-		return false;
+/**
+ * Return true if I'm most close of my zone than he.
+ * */
+	private boolean hadLanePriority(Position otherRobotPosit, WORLD_ENTITY oppositeRobotType) {
+		Rectangle myZone = aim.equals(INTERNAL_AIM.PULL_AIM) ? pullZone : pushZone;
+		Rectangle hisZone = oppositeRobotType.equals(WORLD_ENTITY.ROBOT) ? pullZone : pushZone;
+		int myDist = getDistance(currentPosition, new Position(myZone.x, myZone.y)); 
+		int hisDist = getDistance(otherRobotPosit, new Position(hisZone.x, hisZone.y));
+		return myDist<hisDist;
 	}
 
 	/**
