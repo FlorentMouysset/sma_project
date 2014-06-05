@@ -123,7 +123,7 @@ public class EnvironnementImpl extends Environnement{
 
 			@Override
 			public WORLD_ENTITY getWorldEntityAt(Position position) {
-				System.out.println("ENV : quelqu'un fait un get à " + position + " il y a "+ world[position.getX()][position.getY()]);
+			//	System.out.println("ENV : quelqu'un fait un get à " + position + " il y a "+ world[position.getX()][position.getY()]);
 				return world[position.getX()][position.getY()];
 			}
 
@@ -145,6 +145,7 @@ public class EnvironnementImpl extends Environnement{
 			
 			@Override
 			public void pushResource(Position freePlacePost, Position robotPost) {
+				System.out.println("ENV : PUSH done !");
 				world[freePlacePost.getX()][freePlacePost.getY()] = WORLD_ENTITY.RESOURCE;
 				world[robotPost.getX()][robotPost.getY()] = WORLD_ENTITY.ROBOT;
 				Map<Position, WORLD_ENTITY> changeMap = makeTheSimpleChangingMap(freePlacePost);
@@ -154,6 +155,7 @@ public class EnvironnementImpl extends Environnement{
 			
 			@Override
 			public void pullResource(Position resrcPost, Position robotPost) {
+				System.out.println("ENV : PULL done !");
 				world[resrcPost.getX()][resrcPost.getY()] = WORLD_ENTITY.EMPTY;
 				world[robotPost.getX()][robotPost.getY()] = WORLD_ENTITY.ROBOT_AND_RESOURCE;
 				Map<Position, WORLD_ENTITY> changeMap = makeTheSimpleChangingMap(resrcPost);
@@ -163,7 +165,7 @@ public class EnvironnementImpl extends Environnement{
 			
 			@Override
 			public void moveRobot(Position oldPosition, Position newPosition) {
-				System.out.println("ENV : un robot bouge de " + oldPosition +" à " + newPosition );
+				//System.out.println("ENV : un robot bouge de " + oldPosition +" à " + newPosition );
 				if(world[newPosition.getX()][newPosition.getY()]== WORLD_ENTITY.EMPTY){//TODO 
 					WORLD_ENTITY oldRobot = world[oldPosition.getX()][oldPosition.getY()];
 					world[oldPosition.getX()][oldPosition.getY()] = WORLD_ENTITY.EMPTY;
@@ -172,12 +174,17 @@ public class EnvironnementImpl extends Environnement{
 					Map<Position, WORLD_ENTITY> changingMap = makeTheSimpleChangingMap(oldPosition);
 					changingMap.putAll(makeTheSimpleChangingMap(newPosition));
 					notifyChangement(new WarehouseChangement(changingMap));
-					System.out.println("Ok pour ce deplacement");
+					//System.out.println("Ok pour ce deplacement");
 				}else{
 					System.out.println("KO pour ce mvt, la position n'est pas vide");
 				}
 				printMatrix();
-
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 			
 			@Override
