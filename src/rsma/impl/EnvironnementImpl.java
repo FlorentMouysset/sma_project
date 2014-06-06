@@ -196,6 +196,10 @@ public class EnvironnementImpl extends Environnement{
 			}
 			
 			private void notifyChangement(WarehouseChangement change){
+				//TODO remove 2 lines
+				Map<Position, WORLD_ENTITY> changingMap = makeTheRectangleChanginMap(0,0,X_SIZE, Y_SIZE);
+				change = new WarehouseChangement(changingMap);
+				
 				envObserbableDelegate.setChanged();
 				envObserbableDelegate.notifyObservers(change);
 			}

@@ -28,9 +28,9 @@ public class RobotUtils {
 		Random rand = new Random(System.currentTimeMillis());
 		do{
 			int x = rand.nextInt(rectangle.width-rectangle.x);
-			x +=rectangle.width;
+			x +=rectangle.x;
 			int y = rand.nextInt(rectangle.height-rectangle.y);
-			y +=rectangle.height;
+			y +=rectangle.y;
 			retPost = new Position(x, y);
 			Assert.assertTrue(rectangle.contains(x, y));
 		}while(retPost.equals(excludePost));
