@@ -90,8 +90,9 @@ public class RobotDecision implements IRobotDecision{
 			break;
 		}
 		//TODO verif transition
-
-		nextPost = computeAlternativeIfNeed(currentPosition, nextPost);
+		if(nextPost!=null){
+			nextPost = computeAlternativeIfNeed(currentPosition, nextPost);
+		}
 		return nextPost;
 	}
 
@@ -128,7 +129,7 @@ public class RobotDecision implements IRobotDecision{
 			Position nextPost) {
 		Position postAlt = nextPost;
 		INTERNAL_AIM aim = robotAgent.getAim();
-		WORLD_ENTITY we = robotPerception.getWorldEntityFromPosition(nextPost);
+		WORLD_ENTITY we = robotPerception.getWorldEntityFromPosition(currentPosition, nextPost);
 		if(action.equals(INTERNAL_ACTION.WALK) && !we.equals(WORLD_ENTITY.EMPTY) ){
 			if(we.equals(WORLD_ENTITY.WALL)){
 				if(state.isLaneGoState()){
@@ -325,8 +326,8 @@ public class RobotDecision implements IRobotDecision{
 		if(rescPost == null){
 			nextPost = moveInPullZone(currentPosition);
 		}else if(RobotUtils.getDistance(currentPosition, rescPost) == 1){
-			nextPost = rescPost;
 			action = INTERNAL_ACTION.PULL;
+			nextPost = rescPost;
 			robotAgent.setAim(INTERNAL_AIM.PUSH_AIM);
 			if(robotKnowlage.knowPushLane()){
 				state =INTERNAL_STATE.LANE_PUSH_GO;
@@ -364,12 +365,13 @@ public class RobotDecision implements IRobotDecision{
 	private Position resignation(Position currentPosition) {
 		Position nextPost = null;
 		INTERNAL_AIM aim = robotAgent.getAim();	
-		if(robotPerception.perceptionCurrentPositionIsLaneExit()){
+		SEARCH_PERCEPTION perceptType = (aim == INTERNAL_AIM.PULL_AIM) ? SEARCH_PERCEPTION.LEFT : SEARCH_PERCEPTION.RIGHT;
+		if(robotPerception.perceptionCurrentPositionIsLaneExit(perceptType)){
 			state = INTERNAL_STATE.FORCE;
 			robotKnowlage.forgetTryLane();
 			nextPost = force(currentPosition);
 		}else{
-			Position position = robotPerception.perceptionHasEntity(RobotUtils.getRobotSameTypeByAim(aim), SEARCH_PERCEPTION.FRONT);	
+			Position position = robotPerception.perceptionHasEntity(RobotUtils.getRobotSameTypeByAim(aim), perceptType.reverse());	
 			int dist = RobotUtils.getDistance(currentPosition, position);
 			if (dist==1) {
 				action = INTERNAL_ACTION.NOTHING;
@@ -417,7 +419,8 @@ public class RobotDecision implements IRobotDecision{
 	private Position laneIn(Position currentPosition) {
 		Position nextPost = null;
 		INTERNAL_AIM aim = robotAgent.getAim();
-		if(robotPerception.perceptionCurrentPositionIsLaneExit()){
+		SEARCH_PERCEPTION perceptType = (aim != INTERNAL_AIM.PULL_AIM) ? SEARCH_PERCEPTION.LEFT : SEARCH_PERCEPTION.RIGHT;
+		if(robotPerception.perceptionCurrentPositionIsLaneExit(perceptType)){
 			state = aim.equals(INTERNAL_AIM.PULL_AIM) ? INTERNAL_STATE.ZONE_PULL_GO : INTERNAL_STATE.ZONE_PUSH_GO;			
 			INTERNAL_LANE_STATUS laneStatus = state.getConvertToLaneStatus();
 			robotKnowlage.confirmTryLane(laneStatus);
@@ -428,7 +431,7 @@ public class RobotDecision implements IRobotDecision{
 			}
 		}else{
 			WORLD_ENTITY oppositeRobotType = RobotUtils.getOppositeRobotTypeByAim(aim);
-			Position otherRobotPosit = robotPerception.perceptionHasEntity(oppositeRobotType, SEARCH_PERCEPTION.FRONT);	
+			Position otherRobotPosit = robotPerception.perceptionHasEntity(oppositeRobotType, perceptType.reverse());	
 			int dist = RobotUtils.getDistance(currentPosition, otherRobotPosit);
 			if(cptCycleLaneWainting<2 && dist==1){
 				if(hadLanePriority(currentPosition, otherRobotPosit, oppositeRobotType)){
@@ -447,7 +450,7 @@ public class RobotDecision implements IRobotDecision{
 				nextPost = resignation(currentPosition);
 				// update lanemap ??
 			}else{
-				otherRobotPosit = robotPerception.perceptionHasEntity(aim.equals(INTERNAL_AIM.PUSH_AIM)? WORLD_ENTITY.ROBOT_AND_RESOURCE : WORLD_ENTITY.ROBOT, SEARCH_PERCEPTION.FRONT);	
+				otherRobotPosit = robotPerception.perceptionHasEntity(aim.equals(INTERNAL_AIM.PUSH_AIM)? WORLD_ENTITY.ROBOT_AND_RESOURCE : WORLD_ENTITY.ROBOT, perceptType.reverse());	
 				dist = RobotUtils.getDistance(currentPosition, otherRobotPosit);
 				if(dist < 3){
 					state =INTERNAL_STATE.RESIGNATION;
@@ -469,15 +472,15 @@ public class RobotDecision implements IRobotDecision{
 
 	private Position searchLane(Position currentPosition, int yDirection){
 		Position nextPost = null;
-		boolean hasLaneEntrance = robotPerception.perceptionCurrentPositionIsLaneEntrance();
-		boolean isNotTheOtherLane = true;
 		INTERNAL_AIM aim = robotAgent.getAim();
+		SEARCH_PERCEPTION perceptType = (aim == INTERNAL_AIM.PULL_AIM) ? SEARCH_PERCEPTION.LEFT : SEARCH_PERCEPTION.RIGHT;
+		boolean hasLaneEntrance = robotPerception.perceptionCurrentPositionIsLaneEntrance(perceptType);
+		boolean isNotTheOtherLane = true;
 		INTERNAL_LANE_STATUS laneTypeOther = INTERNAL_LANE_STATUS.reverseStatus(RobotUtils.getLaneStatusFromAim(aim));
 		Position position = robotKnowlage.getPositionOf(laneTypeOther);
 		if(position != null){
 			isNotTheOtherLane = !(position.getY()==currentPosition.getY());
 		}
-
 		if(hasLaneEntrance && isNotTheOtherLane){
 			state = INTERNAL_STATE.LANE_IN;
 			robotKnowlage.rememberLane(INTERNAL_LANE_STATUS.TRY, currentPosition);

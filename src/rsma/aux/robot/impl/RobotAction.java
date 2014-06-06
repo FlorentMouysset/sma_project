@@ -18,7 +18,7 @@ public class RobotAction implements IRobotAction{
 	}
 
 	@Override
-	public void doAction(Position actionPost, IRobotDecision robotDecition) {
+	public Position doAction(Position actionPost, IRobotDecision robotDecition) {
 		Position currentPosition = robotAgent.getCurrentPosition();
 		String id = robotAgent.getID();
 		INTERNAL_ACTION action = robotDecition.getActionToDo();
@@ -39,5 +39,6 @@ public class RobotAction implements IRobotAction{
 		case NOTHING:
 			break;
 		}
+		return currentPosition;
 	}
 }

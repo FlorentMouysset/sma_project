@@ -62,8 +62,7 @@ public class RobotImpl extends Robot{
 					Position nextPost = robotDecision.doDecision();
 					doSuicide = nextPost == null;
 					if(!doSuicide){
-						robotAction.doAction(nextPost, robotDecision);
-						currentPosition = nextPost;
+						currentPosition = robotAction.doAction(nextPost, robotDecision);
 					}
 				}
 				return doSuicide;

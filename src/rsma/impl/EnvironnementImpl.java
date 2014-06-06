@@ -145,7 +145,7 @@ public class EnvironnementImpl extends Environnement{
 			
 			@Override
 			public void pushResource(Position freePlacePost, Position robotPost) {
-				System.out.println("ENV : PUSH done !");
+				System.out.println("ENV : PUSH done !" + freePlacePost + "  robot=" + robotPost);
 				world[freePlacePost.getY()][freePlacePost.getX()] = WORLD_ENTITY.RESOURCE;
 				world[robotPost.getY()][robotPost.getX()] = WORLD_ENTITY.ROBOT;
 				Map<Position, WORLD_ENTITY> changeMap = makeTheSimpleChangingMap(freePlacePost);

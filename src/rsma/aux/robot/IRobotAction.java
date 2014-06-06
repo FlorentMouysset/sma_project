@@ -10,6 +10,6 @@ public interface IRobotAction {
 	 * @return 
 	 * 
 	 * */
-	void doAction(Position nextPost, IRobotDecision robotDecition);
+	Position doAction(Position nextPost, IRobotDecision robotDecition);
 
 }

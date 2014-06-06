@@ -6,11 +6,19 @@ import rsma.util.Position;
 public interface IRobotPerception {
 	/**
 	 * ALL : search everyhere
-	 * FRONT : search front of the robot (front is define by the aim)
-	 * BEHIND : search behind of the robot (behind is define by the aim)
-	 * !! CAREFULL : FRONT && BEHIND juste if you are in lane !!
+
 	 * */
-	public enum SEARCH_PERCEPTION {ALL, FRONT, BEHIND};
+	public enum SEARCH_PERCEPTION {ALL, LEFT, RIGHT;
+
+	public SEARCH_PERCEPTION reverse() {
+		SEARCH_PERCEPTION ret = this;
+		if(ret == LEFT){
+			ret = RIGHT;
+		}else{
+			ret = LEFT;
+		}
+		return ret;
+	}};
 	
 	boolean checkSuicideBeforStartCycle();
 
@@ -19,7 +27,7 @@ public interface IRobotPerception {
 	/**
 	 * Return true if the current position is a lane exit
 	 * */
-	boolean perceptionCurrentPositionIsLaneExit();
+	boolean perceptionCurrentPositionIsLaneExit(SEARCH_PERCEPTION perceptionType);
 
 	/**
 	 * Return the most close position where WE are (based of the map perception). Return null if WE doesn't exist in map perception
@@ -41,11 +49,12 @@ public interface IRobotPerception {
 	/**
 	 * Return true if the current position is a lane entrance
 	 * */
-	boolean perceptionCurrentPositionIsLaneEntrance();
+	boolean perceptionCurrentPositionIsLaneEntrance(SEARCH_PERCEPTION perceptionType);
 
 	/**
 	 * Return the WORLD_ENTITY from a position
+	 * @param nextPost2 
 	 * */
-	WORLD_ENTITY getWorldEntityFromPosition(Position nextPost);
+	WORLD_ENTITY getWorldEntityFromPosition(Position currentPosition, Position nextPost);
 
 }

@@ -2,13 +2,15 @@ package rsma.aux.robot.impl;
 
 import rsma.aux.robot.IRobotPerception;
 import rsma.impl.RobotImpl;
-import rsma.impl.RobotImpl.INTERNAL_AIM;
 import rsma.interfaces.IEnvironnementAnalysis;
 import rsma.interfaces.IEnvironnementAnalysis.WORLD_ENTITY;
 import rsma.util.Position;
 
 public class RobotPerception implements IRobotPerception{
 	private static final int LOCALPERCEPTSIZE = 7;
+	private static final int MAX_VISIBILITY = 3;
+	private static final int Y_POSIT_REF = 3;
+	private static final int X_POSIT_REF = 3;
 	private WORLD_ENTITY[][] localTempPercep = new WORLD_ENTITY[LOCALPERCEPTSIZE][LOCALPERCEPTSIZE];
 	private IEnvironnementAnalysis envAnalysis;
 	private RobotImpl robotAgent;
@@ -22,7 +24,7 @@ public class RobotPerception implements IRobotPerception{
 	@Override
 	public void doPerception() {
 		//init the local temp perception map
-		localTempPercep[3][3]=RobotUtils.getWEFromAim(robotAgent.getAim());
+		localTempPercep[Y_POSIT_REF][X_POSIT_REF]=RobotUtils.getWEFromAim(robotAgent.getAim());
 		WORLD_ENTITY we;
 		Position posit;
 		InternalRobotPerceptionInterator ite = new InternalRobotPerceptionInterator();
@@ -61,10 +63,25 @@ public class RobotPerception implements IRobotPerception{
 	//
 
 	@Override
-	public boolean perceptionCurrentPositionIsLaneExit() {
+	public boolean perceptionCurrentPositionIsLaneExit(SEARCH_PERCEPTION perceptionType) {
+		return isLaneEntrance(perceptionType.reverse());
+	}
+
+	@Override
+	public boolean perceptionCurrentPositionIsLaneEntrance(SEARCH_PERCEPTION perceptionType) {
+		return isLaneEntrance(perceptionType);
+	}
+
+	private boolean isLaneEntrance(SEARCH_PERCEPTION perceptionType){
 		boolean ret = false;
-		ret = !localTempPercep[2][3].equals(WORLD_ENTITY.WALL);	
-		ret |= !localTempPercep[4][3].equals(WORLD_ENTITY.WALL);
+		int xOffset = 1;
+		if(perceptionType == SEARCH_PERCEPTION.LEFT){
+			xOffset = -1;
+		}
+		ret = ! localTempPercep[Y_POSIT_REF][X_POSIT_REF+xOffset].equals(WORLD_ENTITY.WALL);
+		ret &= localTempPercep[Y_POSIT_REF-1][X_POSIT_REF+xOffset].equals(WORLD_ENTITY.WALL);
+		ret &= localTempPercep[Y_POSIT_REF+1][X_POSIT_REF+xOffset].equals(WORLD_ENTITY.WALL);
+		ret &= (!localTempPercep[Y_POSIT_REF+1][X_POSIT_REF].equals(WORLD_ENTITY.WALL)) || (!localTempPercep[Y_POSIT_REF-1][X_POSIT_REF].equals(WORLD_ENTITY.WALL));
 		return ret;
 	}
 
@@ -98,21 +115,24 @@ public class RobotPerception implements IRobotPerception{
 		if(level.equals(SEARCH_PERCEPTION.ALL)){
 			ret = perceptionHasEntity(we);
 		}else{
-			INTERNAL_AIM aim = robotAgent.getAim();
-			boolean aimIsPush = aim.equals(INTERNAL_AIM.PUSH_AIM);
-			boolean frontIsAsked = level.equals(SEARCH_PERCEPTION.FRONT);
 			int xDirection = -1;
-			if( (aimIsPush && frontIsAsked) || (!aimIsPush && !frontIsAsked)  ){
+			if(level.equals(SEARCH_PERCEPTION.RIGHT)){
 				xDirection = 1;
 			}
-			int xOffset = 1;
-			while(xOffset<=3 && ret==null){
-				xOffset++;
-				WORLD_ENTITY weTry = localTempPercep[3][3 + (xDirection*xOffset)];
-				if(weTry.equals(we)){
-					Position currentPosition = robotAgent.getCurrentPosition();
-					ret = new Position(currentPosition.getX() + (xDirection*xOffset), currentPosition.getY());
-				}
+			ret = lookAtNPerceptionFromDirection(xDirection, MAX_VISIBILITY, we);
+		}
+		return ret;
+	}
+
+	private Position lookAtNPerceptionFromDirection(int xDirection, int lookDeep, WORLD_ENTITY we){
+		int xOffset = 0;
+		Position ret = null;
+		while(xOffset<lookDeep && ret==null){
+			xOffset++;
+			WORLD_ENTITY weTry = localTempPercep[Y_POSIT_REF][X_POSIT_REF + (xDirection*xOffset)];
+			if(weTry.equals(we)){
+				Position currentPosition = robotAgent.getCurrentPosition();
+				ret = new Position(currentPosition.getX() + (xDirection*xOffset), currentPosition.getY());
 			}
 		}
 		return ret;
@@ -141,26 +161,16 @@ public class RobotPerception implements IRobotPerception{
 	}
 
 	@Override
-	public boolean perceptionCurrentPositionIsLaneEntrance() {
-		boolean ret = false;
-		INTERNAL_AIM aim = robotAgent.getAim();
-		if(aim.equals(INTERNAL_AIM.PULL_AIM)){
-			ret = ! localTempPercep[3][3-1].equals(WORLD_ENTITY.WALL);
-		}else{
-			ret = ! localTempPercep[3][3+1].equals(WORLD_ENTITY.WALL);
-		}
-		return ret;
-	}
-
-	@Override
 	public boolean checkSuicideBeforStartCycle() {
 		Position currentPosition = robotAgent.getCurrentPosition();
 		return envAnalysis.getWorldEntityAt(currentPosition).equals(WORLD_ENTITY.WALL);		
 	}
 
 	@Override
-	public WORLD_ENTITY getWorldEntityFromPosition(Position nextPost) {
-		return envAnalysis.getWorldEntityAt(nextPost);
+	public WORLD_ENTITY getWorldEntityFromPosition(Position currentPosition, Position nextPost) {
+		int xOffset = nextPost.getX() - currentPosition.getX();
+		int yOffset = nextPost.getY() - currentPosition.getY();
+		return localTempPercep[Y_POSIT_REF + yOffset][X_POSIT_REF + xOffset];
 	}
 
 	private class InternalRobotPerceptionInterator{
@@ -179,7 +189,7 @@ public class RobotPerception implements IRobotPerception{
 					y=-1;
 				}
 				y++;
-				post = new Position(absRobotPost.getX() - (3-x), absRobotPost.getY() - (3-y));
+				post = new Position(absRobotPost.getX() - (X_POSIT_REF-x), absRobotPost.getY() - (Y_POSIT_REF-y));
 			}
 			return post;
 		}
