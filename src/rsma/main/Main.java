@@ -27,7 +27,7 @@ public class Main {
 		
 		GUI.Component gui = (new GUIImpl())._newComponent(b, true); //create the warehouse
 
-		warehouse.warehouseActionPort().launchArrangement(10);//lauch
+		warehouse.warehouseScheduleActionPort().launchArrangement(10);//lauch
 	}
 
 }

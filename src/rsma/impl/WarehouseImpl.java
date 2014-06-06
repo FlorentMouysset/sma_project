@@ -14,7 +14,7 @@ public class WarehouseImpl extends Warehouse{
 	
 	@Override
 	protected Sheduler make_sheduler() {
-		return new ShedulerImpl();
+		return new SchedulerImpl();
 	}
 
 	@Override
