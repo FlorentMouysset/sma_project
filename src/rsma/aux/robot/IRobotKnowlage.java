@@ -3,7 +3,7 @@ package rsma.aux.robot;
 import rsma.util.Position;
 
 public interface IRobotKnowlage {
-	public static enum INTERNAL_LANE_STATUS {TRY, PULL_LANE, PUSH_LANE;
+	public enum INTERNAL_LANE_STATUS {TRY, PULL_LANE, PUSH_LANE;
 	
 	/**TRY-> TRY ; PULL --> PUSH ; PUSH --> PULL*/
 		public static INTERNAL_LANE_STATUS reverseStatus(INTERNAL_LANE_STATUS status){

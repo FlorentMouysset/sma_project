@@ -123,7 +123,7 @@ public class EnvironnementImpl extends Environnement{
 
 			@Override
 			public WORLD_ENTITY getWorldEntityAt(Position position) {
-				System.out.println("ENV : quelqu'un fait un get à " + position + " il y a "+ world[position.getY()][position.getX()]);
+			//	System.out.println("ENV : quelqu'un fait un get à " + position + " il y a "+ world[position.getY()][position.getX()]);
 				return world[position.getY()][position.getX()];
 			}
 
@@ -180,7 +180,7 @@ public class EnvironnementImpl extends Environnement{
 				}
 				printMatrix();
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(175);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -209,7 +209,7 @@ public class EnvironnementImpl extends Environnement{
 				System.out.println("ENV : ajout d'un robot à " + robotPost );
 				world[robotPost.getY()][robotPost.getX()] = WORLD_ENTITY.ROBOT;
 				notifyChangement(new WarehouseChangement(makeTheSimpleChangingMap(robotPost)));
-				printMatrix();
+				//printMatrix();
 			}
 		};
 	}

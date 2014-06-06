@@ -64,7 +64,7 @@ public class RobotPerception implements IRobotPerception{
 
 	@Override
 	public boolean perceptionCurrentPositionIsLaneExit(SEARCH_PERCEPTION perceptionType) {
-		return isLaneEntrance(perceptionType.reverse());
+		return isLaneEntrance(perceptionType);//TODO refactor
 	}
 
 	@Override
@@ -93,7 +93,7 @@ public class RobotPerception implements IRobotPerception{
 		while(!ite.interatorIsTerminate()){
 			Position postTry = ite.getNextPosition();
 			if(RobotUtils.positionIsValide(postTry)){
-				if(localTempPercep[ite.y][ite.x].equals(we)){ //if a we is foud
+				if(localTempPercep[ite.y][ite.x].equals(we)){ //if a we is found
 					if(ret==null){
 						ret = postTry;//init
 					}else{//maybe postTry is most close than ret
@@ -197,6 +197,11 @@ public class RobotPerception implements IRobotPerception{
 		public boolean interatorIsTerminate(){
 			return x==(LOCALPERCEPTSIZE-1) && y ==(LOCALPERCEPTSIZE-1);
 		}
+	}
+
+	@Override
+	public boolean isInLane(Position currentPosition) {
+		return localTempPercep[Y_POSIT_REF -1 ][X_POSIT_REF].equals(WORLD_ENTITY.WALL) && localTempPercep[Y_POSIT_REF +1 ][X_POSIT_REF].equals(WORLD_ENTITY.WALL);
 	}
 
 

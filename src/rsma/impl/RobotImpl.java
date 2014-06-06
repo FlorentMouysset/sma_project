@@ -21,7 +21,7 @@ public class RobotImpl extends Robot{
 
 	private Position currentPosition;
 
-	public static enum INTERNAL_AIM {PULL_AIM, PUSH_AIM};
+	public enum INTERNAL_AIM {PULL_AIM, PUSH_AIM};
 	private INTERNAL_AIM aim = INTERNAL_AIM.PULL_AIM;
 
 	private IRobotPerception robotPerception;

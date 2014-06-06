@@ -15,9 +15,10 @@ public class RobotUtils {
 	public static Rectangle pushZone;
 	public static int X_MAX;
 	public static int Y_MAX;
+	private static Random rand;
 	
 	public static boolean positionIsValide(Position posit) {
-		return posit.getX()>0 && posit.getY()>0 && posit.getX()<X_MAX && posit.getY()<Y_MAX;
+		return posit.getX()>=0 && posit.getY()>=0 && posit.getX()<X_MAX && posit.getY()<Y_MAX;
 	}
 	
 	/**
@@ -25,7 +26,7 @@ public class RobotUtils {
 	 * */
 	public static Position getRandomPostOnRectangle(Rectangle rectangle, Position excludePost){
 		Position retPost = null;
-		Random rand = new Random(System.currentTimeMillis());
+		initRand();
 		do{
 			int x = rand.nextInt(rectangle.width-rectangle.x);
 			x +=rectangle.x;
@@ -38,6 +39,12 @@ public class RobotUtils {
 		return retPost;
 	}
 	
+	private static void initRand() {
+		if(rand == null){
+			rand = new Random(System.currentTimeMillis());
+		}
+	}
+
 	/**
 	 * Return the number of move to reach posit2 from posit1. If return 1 posit2 is the 1-neighborhood to posit1
 	 * */
@@ -71,6 +78,15 @@ public class RobotUtils {
 	public static Rectangle getZoneFromWE(WORLD_ENTITY oppositeRobotType) {
 		Assert.assertTrue(oppositeRobotType.equals(WORLD_ENTITY.ROBOT) || oppositeRobotType.equals(WORLD_ENTITY.ROBOT_AND_RESOURCE));
 		return oppositeRobotType.equals(WORLD_ENTITY.ROBOT) ? pullZone : pushZone;
+	}
+
+	public static double getEuclideDistance(Position posit, Position positZone) {
+		return Math.sqrt( Math.pow((positZone.getX() - posit.getX()),2) + Math.pow( (positZone.getY() - posit.getY()), 2) );
+	}
+
+	public static boolean getRandomBool() {
+		initRand();
+		return rand.nextBoolean();
 	}
 	
 }

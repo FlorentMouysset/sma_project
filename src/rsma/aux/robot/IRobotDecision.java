@@ -4,7 +4,7 @@ import rsma.util.Position;
 
 public interface IRobotDecision {
 
-	public static enum INTERNAL_ACTION {WALK, PULL, PUSH, NOTHING};
+	public enum INTERNAL_ACTION {WALK, PULL, PUSH, NOTHING};
 
 	/**
 	 * take a action (update the attribute action) and eventually update the aim, the lane knowledge, the state and the external state.

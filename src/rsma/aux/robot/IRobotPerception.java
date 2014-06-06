@@ -57,4 +57,6 @@ public interface IRobotPerception {
 	 * */
 	WORLD_ENTITY getWorldEntityFromPosition(Position currentPosition, Position nextPost);
 
+	boolean isInLane(Position currentPosition);
+
 }

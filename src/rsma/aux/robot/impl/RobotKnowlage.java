@@ -32,8 +32,10 @@ public class RobotKnowlage implements IRobotKnowlage{
 	@Override
 	public void confirmTryLane(INTERNAL_LANE_STATUS laneStatus) {
 		Position positLaneEntrance = laneMap.get(INTERNAL_LANE_STATUS.TRY);
-		laneMap.put(laneStatus, positLaneEntrance);					
-		laneMap.remove(INTERNAL_LANE_STATUS.TRY);
+		if(positLaneEntrance!=null){
+			laneMap.put(laneStatus, positLaneEntrance);					
+			laneMap.remove(INTERNAL_LANE_STATUS.TRY);
+		}
 	}
 
 	@Override
