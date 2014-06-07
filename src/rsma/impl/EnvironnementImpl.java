@@ -50,14 +50,14 @@ public class EnvironnementImpl extends Environnement{
 		//make the middle wall
 		int middleWallXStart = Integer.parseInt(ConfigurationManager.getProperty("MIDDLE_WALL_X_START"));
 		int middleWallXStop = Integer.parseInt(ConfigurationManager.getProperty("MIDDLE_WALL_X_STOP"));
-		fillTheMatrixByEntity(middleWallXStart, middleWallXStop-middleWallXStart, 0, Y_SIZE-1, WORLD_ENTITY.WALL);
+		fillTheMatrixByEntity(middleWallXStart, (middleWallXStop-middleWallXStart)+1, 0, Y_SIZE-1, WORLD_ENTITY.WALL);
 		
 		//make the lanes
 		yLanes = new int[2];
 		yLanes[0] = Integer.parseInt(ConfigurationManager.getProperty("LANE_Y_1"));
 		yLanes[1] = Integer.parseInt(ConfigurationManager.getProperty("LANE_Y_2"));
 		for(int nbLane : yLanes){
-			fillTheMatrixByEntity(middleWallXStart, middleWallXStop-middleWallXStart, nbLane-1, 1, WORLD_ENTITY.EMPTY);
+			fillTheMatrixByEntity(middleWallXStart, (middleWallXStop-middleWallXStart)+1, nbLane-1, 1, WORLD_ENTITY.EMPTY);
 		}
 		
 		//make the pull/push zones

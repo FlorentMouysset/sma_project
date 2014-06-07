@@ -2,6 +2,7 @@ package rsma.cycle.robot.impl;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,7 +11,8 @@ import rsma.util.Position;
 
 public class RobotKnowlage implements IRobotKnowlage{
 	private Map<INTERNAL_LANE_STATUS, Position> laneMap = new HashMap<INTERNAL_LANE_STATUS, Position>();
-	private Set<Position> freePlaceResources = new HashSet<Position>();
+	private Set<Position> freePlaceResourcesOnPullZone = new HashSet<Position>();
+	private Set<Position> freePlaceOnPushZone = new HashSet<Position>();
 	
 	@Override
 	public boolean knowPushLane() {
@@ -53,12 +55,29 @@ public class RobotKnowlage implements IRobotKnowlage{
 
 	@Override
 	public void rememberFreeResourcesPlaces(Position currentPosition) {
-		freePlaceResources.add(currentPosition);
+		freePlaceResourcesOnPullZone.add(currentPosition);
 	}
 
 	@Override
 	public int countFreeResourcePlaces() {
-		return freePlaceResources.size();
+		return freePlaceResourcesOnPullZone.size();
+	}
+
+	@Override
+	public void updateFreePlaces(List<Position> freePlacesPost,
+			List<Position> rscPlacesPost) {
+		freePlaceOnPushZone.addAll(freePlacesPost);
+		freePlaceOnPushZone.removeAll(rscPlacesPost);
+	}
+
+	@Override
+	public Position getAFreePlace() {
+		return freePlaceOnPushZone.iterator().next();
+	}
+
+	@Override
+	public boolean knowFreePlace() {
+		return !freePlaceOnPushZone.isEmpty();
 	}
 
 }

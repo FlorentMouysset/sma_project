@@ -1,5 +1,8 @@
 package rsma.cycle.robot.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import rsma.impl.RobotImpl;
 import rsma.interfaces.IEnvironnementAnalysis;
 import rsma.interfaces.IEnvironnementAnalysis.WORLD_ENTITY;
@@ -140,26 +143,38 @@ public class RobotPerception implements IRobotPerception{
 
 	@Override
 	public boolean perceptionHasFreePlace() {
-		return searchOnPerceptionFreePlacePosition()!=null;
+		return !searchOnPerceptionFreePlacesPositionOnPushZone().isEmpty();
 	}
 
 	@Override
-	public Position searchOnPerceptionFreePlacePosition() {
-		Position post = null;
+	public List<Position> searchOnPerceptionFreePlacesPositionOnPushZone() {
+		return searchOnPerceptionPushZone(WORLD_ENTITY.EMPTY);
+	}
+	
+	@Override
+	public List<Position> searchOnPerceptionResourcesPlacesPositionOnPushZone() {
+		return searchOnPerceptionPushZone(WORLD_ENTITY.RESOURCE);
+	}
+
+	private List<Position> searchOnPerceptionPushZone(WORLD_ENTITY we) {
+		List<Position> posts = new ArrayList<Position>();
 		InternalRobotPerceptionInterator ite = new InternalRobotPerceptionInterator();
 		while(!ite.interatorIsTerminate()){
 			Position posit = ite.getNextPosition();
 			//if the position is valide and is int he push zone
 			if(RobotUtils.positionIsValide(posit) && RobotUtils.pushZone.contains(posit.getX(), posit.getY())){
-				if(localTempPercep[ite.y][ite.x].equals(WORLD_ENTITY.EMPTY)){ //and is a free place
-					post = posit;
+				if(localTempPercep[ite.y][ite.x].equals(we)){ //and is a free place
+					//post = posit;
+					posts.add(posit);
 					//!!! DO NO EXIT TO WHILE BECAUSE WE GET THE MOST FAR FREE PLACE
 				}
 			}
 		}
-		return post;
+		return posts;
 	}
+	
 
+	
 	@Override
 	public boolean checkSuicideBeforStartCycle() {
 		Position currentPosition = robotAgent.getCurrentPosition();
@@ -203,6 +218,7 @@ public class RobotPerception implements IRobotPerception{
 	public boolean isInLane(Position currentPosition) {
 		return localTempPercep[Y_POSIT_REF -1 ][X_POSIT_REF].equals(WORLD_ENTITY.WALL) && localTempPercep[Y_POSIT_REF +1 ][X_POSIT_REF].equals(WORLD_ENTITY.WALL);
 	}
+
 
 
 }

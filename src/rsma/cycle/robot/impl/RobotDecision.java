@@ -196,21 +196,20 @@ public class RobotDecision implements IRobotDecision{
 		if(!alt.equals(currentPosition)){
 			if(state != INTERNAL_STATE.FREEPLACE_SEARCH){
 				INTERNAL_AIM aim = robotAgent.getAim();
-				state = aim.equals(INTERNAL_AIM.PULL_AIM) ? INTERNAL_STATE.ZONE_PULL_GO : INTERNAL_STATE.ZONE_PUSH_GO;			
-				if(state.equals(INTERNAL_STATE.ZONE_PULL_GO)){
-					if(robotKnowlage.knowPullLane()){
-						state = INTERNAL_STATE.LANE_PULL_GO;
+				if(aim.equals(INTERNAL_AIM.PULL_AIM)){
+					//if(robotKnowlage.knowPullLane()){
+						////state = INTERNAL_STATE.LANE_PULL_GO;
 						nextPost = lanePullGo(currentPosition);
-					}else{
+					//}else{
 						nextPost = zonePullGo(currentPosition);
-					}
+					//}
 				}else{
-					if(robotKnowlage.knowPushLane()){
-						state = INTERNAL_STATE.LANE_PUSH_GO;
-						nextPost = lanePushGo(currentPosition);
-					}else{
+					//if(robotKnowlage.knowPushLane()){
+						////state = INTERNAL_STATE.LANE_PUSH_GO;
+					//	nextPost = lanePushGo(currentPosition);
+					//}else{
 						nextPost = zonePushGo(currentPosition);
-					}
+					//}
 				}
 				if(robotPerception.getWorldEntityFromPosition(currentPosition, nextPost).equals(WORLD_ENTITY.EMPTY)){
 					alt = nextPost;
@@ -289,6 +288,9 @@ public class RobotDecision implements IRobotDecision{
 		}else if(robotPerception.perceptionCurrentPositionIsLaneEntrance(SEARCH_PERCEPTION.RIGHT)){
 			state = INTERNAL_STATE.LANE_IN;
 			nextPost = laneIn(currentPosition);
+		}else if(robotKnowlage.knowFreePlace()){
+			nextPost = computeNextPositionFromFarPosition(currentPosition, robotKnowlage.getAFreePlace());
+			action = INTERNAL_ACTION.WALK;
 		}else{
 			nextPost = computeNextPositionFromRectangle(currentPosition, RobotUtils.pushZone);
 			action = INTERNAL_ACTION.WALK;
@@ -313,12 +315,19 @@ public class RobotDecision implements IRobotDecision{
 	 */
 	private Position freePlaceSearch(Position currentPosition) {
 		Position nextPost = null;
-		Position freePlacePost = robotPerception.searchOnPerceptionFreePlacePosition();
+		List<Position> freePlacesPost = robotPerception.searchOnPerceptionFreePlacesPositionOnPushZone();
+		List<Position> rscPlacesPost = robotPerception.searchOnPerceptionResourcesPlacesPositionOnPushZone();
+		Position freePlacePost  = freePlacesPost.get(freePlacesPost.size()-1);
+		robotKnowlage.updateFreePlaces(freePlacesPost, rscPlacesPost);
 		action = INTERNAL_ACTION.WALK;
 		if(freePlacePost == null){
 			nextPost = moveInPushZone(currentPosition);
 		}else if(RobotUtils.getDistance(currentPosition, freePlacePost)==1){
 			nextPost = freePlacePost;
+			rscPlacesPost.clear();
+			rscPlacesPost.add(freePlacePost);
+			freePlacesPost.clear();
+			robotKnowlage.updateFreePlaces(freePlacesPost, rscPlacesPost);
 			action = INTERNAL_ACTION.PUSH;
 			cpt++;
 			robotAgent.setAim(INTERNAL_AIM.PULL_AIM);
@@ -392,9 +401,10 @@ public class RobotDecision implements IRobotDecision{
 		Position nextPost = null;
 		Position rescPost = robotPerception.perceptionHasEntity(WORLD_ENTITY.RESOURCE, IRobotPerception.SEARCH_PERCEPTION.ALL);
 		action = INTERNAL_ACTION.WALK;
+		if(RobotUtils.pullZone.contains(currentPosition.getX(), currentPosition.getY())){
+			robotKnowlage.rememberFreeResourcesPlaces(currentPosition);			
+		}
 		if(rescPost == null){
-			Assert.assertTrue(RobotUtils.pullZone.contains(currentPosition.getX(), currentPosition.getY()));
-			robotKnowlage.rememberFreeResourcesPlaces(currentPosition);
 			int nbFRP = robotKnowlage.countFreeResourcePlaces();
 			if(RobotUtils.pullZone.height * RobotUtils.pullZone.width != nbFRP){
 				nextPost = moveInPullZone(currentPosition);
@@ -403,6 +413,8 @@ public class RobotDecision implements IRobotDecision{
 			action = INTERNAL_ACTION.PULL;
 			nextPost = rescPost;
 			robotAgent.setAim(INTERNAL_AIM.PUSH_AIM);
+			robotKnowlage.rememberFreeResourcesPlaces(rescPost);			
+
 			if(robotKnowlage.knowPushLane()){
 				state =INTERNAL_STATE.LANE_PUSH_GO;
 			}else{

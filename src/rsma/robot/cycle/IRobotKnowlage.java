@@ -1,5 +1,7 @@
 package rsma.robot.cycle;
 
+import java.util.List;
+
 import rsma.util.Position;
 
 public interface IRobotKnowlage {
@@ -20,5 +22,9 @@ public interface IRobotKnowlage {
 	void cleanLaneKnowlage(INTERNAL_LANE_STATUS laneStatusFromAim);
 	void rememberFreeResourcesPlaces(Position currentPosition);
 	int countFreeResourcePlaces();
+	void updateFreePlaces(List<Position> freePlacesPost,
+			List<Position> rscPlacesPost);
+	Position getAFreePlace();
+	boolean knowFreePlace();
 
 }

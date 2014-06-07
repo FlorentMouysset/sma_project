@@ -1,5 +1,7 @@
 package rsma.robot.cycle;
 
+import java.util.List;
+
 import rsma.interfaces.IEnvironnementAnalysis.WORLD_ENTITY;
 import rsma.util.Position;
 
@@ -42,9 +44,9 @@ public interface IRobotPerception {
 
 	/**
 	 * Return the position of a free place or null if none free place are see.
-	 * the most far the free place is return (i hope)
+	 * the most far the free place is at the end of the list (i hope)
 	 * */
-	Position searchOnPerceptionFreePlacePosition();
+	List<Position> searchOnPerceptionFreePlacesPositionOnPushZone();
 
 	/**
 	 * Return true if the current position is a lane entrance
@@ -58,5 +60,7 @@ public interface IRobotPerception {
 	WORLD_ENTITY getWorldEntityFromPosition(Position currentPosition, Position nextPost);
 
 	boolean isInLane(Position currentPosition);
+
+	List<Position> searchOnPerceptionResourcesPlacesPositionOnPushZone();
 
 }
