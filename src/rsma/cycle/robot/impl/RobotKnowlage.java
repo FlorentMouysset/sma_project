@@ -1,14 +1,17 @@
 package rsma.cycle.robot.impl;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import rsma.robot.cycle.IRobotKnowlage;
 import rsma.util.Position;
 
 public class RobotKnowlage implements IRobotKnowlage{
 	private Map<INTERNAL_LANE_STATUS, Position> laneMap = new HashMap<INTERNAL_LANE_STATUS, Position>();
-
+	private Set<Position> freePlaceResources = new HashSet<Position>();
+	
 	@Override
 	public boolean knowPushLane() {
 		return laneMap.containsKey(INTERNAL_LANE_STATUS.PUSH_LANE);
@@ -46,6 +49,16 @@ public class RobotKnowlage implements IRobotKnowlage{
 	@Override
 	public void cleanLaneKnowlage(INTERNAL_LANE_STATUS laneStatusFromAim) {
 		laneMap.remove(laneStatusFromAim);
+	}
+
+	@Override
+	public void rememberFreeResourcesPlaces(Position currentPosition) {
+		freePlaceResources.add(currentPosition);
+	}
+
+	@Override
+	public int countFreeResourcePlaces() {
+		return freePlaceResources.size();
 	}
 
 }

@@ -18,5 +18,7 @@ public interface IRobotKnowlage {
 	void confirmTryLane(INTERNAL_LANE_STATUS laneStatus);
 	void forgetTryLane();
 	void cleanLaneKnowlage(INTERNAL_LANE_STATUS laneStatusFromAim);
+	void rememberFreeResourcesPlaces(Position currentPosition);
+	int countFreeResourcePlaces();
 
 }

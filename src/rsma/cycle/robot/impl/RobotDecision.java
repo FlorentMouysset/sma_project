@@ -92,7 +92,6 @@ public class RobotDecision implements IRobotDecision{
 			nextPost = force(currentPosition);
 			break;
 		}
-		//TODO verif transition
 		if(nextPost!=null){
 			nextPost = computeAlternativeIfNeed(currentPosition, nextPost);
 		}
@@ -180,7 +179,7 @@ public class RobotDecision implements IRobotDecision{
 		int tryDist;
 		for(int xOffset=-1; xOffset<2; xOffset ++){
 			for(int yOffset=-1; yOffset<2; yOffset++){ //for all 1-neighborhood of robot
-				tryAlt = new Position(currentPosition.getX() + xOffset, currentPosition.getY() + xOffset);
+				tryAlt = new Position(currentPosition.getX() + xOffset, currentPosition.getY() + yOffset);
 				if(!tryAlt.equals(nextPost) && RobotUtils.positionIsValide(tryAlt)){ //if the current neighbor is valid
 					tryDist = RobotUtils.getDistance(tryAlt, nextPost); //compute the distance from bad position to alternative
 					if(robotPerception.getWorldEntityFromPosition(currentPosition, tryAlt).equals(WORLD_ENTITY.EMPTY)&&tryDist<=bestDist){ //if the alternative is empty and equals or best than current best distance
@@ -394,7 +393,12 @@ public class RobotDecision implements IRobotDecision{
 		Position rescPost = robotPerception.perceptionHasEntity(WORLD_ENTITY.RESOURCE, IRobotPerception.SEARCH_PERCEPTION.ALL);
 		action = INTERNAL_ACTION.WALK;
 		if(rescPost == null){
-			nextPost = moveInPullZone(currentPosition);
+			Assert.assertTrue(RobotUtils.pullZone.contains(currentPosition.getX(), currentPosition.getY()));
+			robotKnowlage.rememberFreeResourcesPlaces(currentPosition);
+			int nbFRP = robotKnowlage.countFreeResourcePlaces();
+			if(RobotUtils.pullZone.height * RobotUtils.pullZone.width != nbFRP){
+				nextPost = moveInPullZone(currentPosition);
+			}//else if end !
 		}else if(RobotUtils.getDistance(currentPosition, rescPost) == 1){
 			action = INTERNAL_ACTION.PULL;
 			nextPost = rescPost;
@@ -587,18 +591,22 @@ public class RobotDecision implements IRobotDecision{
 	 * Return a position to go in push zone
 	 * */
 	private Position moveInPushZone(Position currentPosition) {
-		return RobotUtils.getRandomPostOnRectangle(RobotUtils.pushZone, currentPosition);
+		Position randomPositAim = RobotUtils.getRandomPostOnRectangle(RobotUtils.pushZone, currentPosition);
+		randomPositAim = computeNextPositionFromFarPosition(currentPosition, randomPositAim);
+		return randomPositAim;
 	}
 
 	/**
 	 * Return a position to go in pull zone
 	 * */
 	private Position moveInPullZone(Position currentPosition) {
-		return RobotUtils.getRandomPostOnRectangle(RobotUtils.pullZone, currentPosition);
+		Position randomPositAim = RobotUtils.getRandomPostOnRectangle(RobotUtils.pullZone, currentPosition);
+		randomPositAim = computeNextPositionFromFarPosition(currentPosition, randomPositAim);
+		return randomPositAim;
 	}
 
 	private Position computeNextPositionFromRectangle(Position currentPosition, Rectangle pullZone2) {
-		Position post = new Position(pullZone2.x, pullZone2.y);
+		Position post = new Position((int)pullZone2.getCenterX(), (int)pullZone2.getCenterY());
 		return computeNextPositionFromFarPosition(currentPosition, post);
 	}
 
