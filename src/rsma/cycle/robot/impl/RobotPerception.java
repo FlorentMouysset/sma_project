@@ -1,9 +1,9 @@
-package rsma.aux.robot.impl;
+package rsma.cycle.robot.impl;
 
-import rsma.aux.robot.IRobotPerception;
 import rsma.impl.RobotImpl;
 import rsma.interfaces.IEnvironnementAnalysis;
 import rsma.interfaces.IEnvironnementAnalysis.WORLD_ENTITY;
+import rsma.robot.cycle.IRobotPerception;
 import rsma.util.Position;
 
 public class RobotPerception implements IRobotPerception{

@@ -40,24 +40,24 @@ public class EnvironnementImpl extends Environnement{
 		/**Initialized the matrix with a logical value, is not a optimized algorithm*/
 		
 		//fill by empty
-		fillTheMatrixByEntity(1, X_SIZE-1, 1, Y_SIZE-1, WORLD_ENTITY.EMPTY);
+		fillTheMatrixByEntity(1, X_SIZE-2, 1, Y_SIZE-2, WORLD_ENTITY.EMPTY);
 		//make the border
 		fillTheMatrixByEntity(0, X_SIZE, 0, 1, WORLD_ENTITY.WALL); //the up border
-		fillTheMatrixByEntity(0, 1, 0, Y_SIZE-1, WORLD_ENTITY.WALL); //the left border
-		fillTheMatrixByEntity(0, X_SIZE, Y_SIZE-1, Y_SIZE, WORLD_ENTITY.WALL); //the bottom border
-		fillTheMatrixByEntity(X_SIZE-1, X_SIZE, 0, Y_SIZE-1, WORLD_ENTITY.WALL); //the right border
+		fillTheMatrixByEntity(0, 1, 1, Y_SIZE-2, WORLD_ENTITY.WALL); //the left border
+		fillTheMatrixByEntity(0, X_SIZE, Y_SIZE-1, 1, WORLD_ENTITY.WALL); //the bottom border
+		fillTheMatrixByEntity(X_SIZE-1, 1, 1, Y_SIZE-2, WORLD_ENTITY.WALL); //the right border
 		
 		//make the middle wall
 		int middleWallXStart = Integer.parseInt(ConfigurationManager.getProperty("MIDDLE_WALL_X_START"));
 		int middleWallXStop = Integer.parseInt(ConfigurationManager.getProperty("MIDDLE_WALL_X_STOP"));
-		fillTheMatrixByEntity(middleWallXStart, middleWallXStop, 0, Y_SIZE,WORLD_ENTITY.WALL);
+		fillTheMatrixByEntity(middleWallXStart, middleWallXStop-middleWallXStart, 0, Y_SIZE-1, WORLD_ENTITY.WALL);
 		
 		//make the lanes
 		yLanes = new int[2];
 		yLanes[0] = Integer.parseInt(ConfigurationManager.getProperty("LANE_Y_1"));
 		yLanes[1] = Integer.parseInt(ConfigurationManager.getProperty("LANE_Y_2"));
 		for(int nbLane : yLanes){
-			fillTheMatrixByEntity(middleWallXStart, middleWallXStop, nbLane-1, nbLane, WORLD_ENTITY.EMPTY);
+			fillTheMatrixByEntity(middleWallXStart, middleWallXStop-middleWallXStart, nbLane-1, 1, WORLD_ENTITY.EMPTY);
 		}
 		
 		//make the pull/push zones
@@ -74,12 +74,12 @@ public class EnvironnementImpl extends Environnement{
 		int pushXLenght = Integer.parseInt(ConfigurationManager.getProperty("PUSH_ZONE_X_LENGHT"));
 		int pushYLenght= Integer.parseInt(ConfigurationManager.getProperty("PUSH_ZONE_Y_LENGHT"));
 		pushZone = new Rectangle(pushXStart, pushYStart, pushXLenght, pushYLenght);
-		printMatrix();
+		//printMatrix();
 	};
 	
 	private void fillTheMatrixByEntity(int xStart, int xLenght, int yStart, int yLenght, WORLD_ENTITY entity){
-		for(int y=yStart; y<yLenght; y++){
-			for(int x = xStart; x<xLenght; x++){
+		for(int y=yStart; y<yLenght+yStart; y++){
+			for(int x = xStart; x<xLenght+xStart; x++){
 				world[y][x] = entity;
 			}
 		}
@@ -178,9 +178,9 @@ public class EnvironnementImpl extends Environnement{
 				}else{
 					System.out.println("KO pour ce mvt, la position n'est pas vide");
 				}
-				printMatrix();
+				//printMatrix();
 				try {
-					Thread.sleep(175);
+					Thread.sleep(50);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

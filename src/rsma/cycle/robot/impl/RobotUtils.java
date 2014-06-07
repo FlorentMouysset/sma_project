@@ -1,13 +1,13 @@
-package rsma.aux.robot.impl;
+package rsma.cycle.robot.impl;
 
 import java.awt.Rectangle;
 import java.util.Random;
 
 import org.junit.Assert;
 
-import rsma.aux.robot.IRobotKnowlage.INTERNAL_LANE_STATUS;
 import rsma.impl.RobotImpl.INTERNAL_AIM;
 import rsma.interfaces.IEnvironnementAnalysis.WORLD_ENTITY;
+import rsma.robot.cycle.IRobotKnowlage.INTERNAL_LANE_STATUS;
 import rsma.util.Position;
 
 public class RobotUtils {
@@ -28,9 +28,9 @@ public class RobotUtils {
 		Position retPost = null;
 		initRand();
 		do{
-			int x = rand.nextInt(rectangle.width-rectangle.x);
+			int x = getRandomInt(rectangle.width-rectangle.x);
 			x +=rectangle.x;
-			int y = rand.nextInt(rectangle.height-rectangle.y);
+			int y = getRandomInt(rectangle.height-rectangle.y);
 			y +=rectangle.y;
 			retPost = new Position(x, y);
 			Assert.assertTrue(rectangle.contains(x, y));
@@ -87,6 +87,11 @@ public class RobotUtils {
 	public static boolean getRandomBool() {
 		initRand();
 		return rand.nextBoolean();
+	}
+
+	public static int getRandomInt(int size) {
+		initRand();
+		return rand.nextInt(size);
 	}
 	
 }

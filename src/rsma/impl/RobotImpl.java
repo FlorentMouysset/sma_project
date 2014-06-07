@@ -3,16 +3,16 @@ package rsma.impl;
 import java.awt.Rectangle;
 
 import rsma.Robots.Robot;
-import rsma.aux.robot.IRobotAction;
-import rsma.aux.robot.IRobotDecision;
-import rsma.aux.robot.IRobotKnowlage;
-import rsma.aux.robot.IRobotPerception;
-import rsma.aux.robot.impl.RobotAction;
-import rsma.aux.robot.impl.RobotDecision;
-import rsma.aux.robot.impl.RobotKnowlage;
-import rsma.aux.robot.impl.RobotPerception;
-import rsma.aux.robot.impl.RobotUtils;
+import rsma.cycle.robot.impl.RobotAction;
+import rsma.cycle.robot.impl.RobotDecision;
+import rsma.cycle.robot.impl.RobotKnowlage;
+import rsma.cycle.robot.impl.RobotPerception;
+import rsma.cycle.robot.impl.RobotUtils;
 import rsma.interfaces.IRobotActions;
+import rsma.robot.cycle.IRobotAction;
+import rsma.robot.cycle.IRobotDecision;
+import rsma.robot.cycle.IRobotKnowlage;
+import rsma.robot.cycle.IRobotPerception;
 import rsma.util.ConfigurationManager;
 import rsma.util.Position;
 

@@ -1,4 +1,4 @@
-package rsma.aux.robot;
+package rsma.robot.cycle;
 
 import rsma.interfaces.IEnvironnementAnalysis.WORLD_ENTITY;
 import rsma.util.Position;

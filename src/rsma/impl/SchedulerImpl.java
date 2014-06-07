@@ -23,9 +23,9 @@ public class SchedulerImpl extends Sheduler{
 							e.printStackTrace();
 						}
 					}
-					System.out.println("Le sheduler doit faire un cyle");
+					//System.out.println("Le sheduler doit faire un cyle");
 					result = requires().shedulerSMAPort().doCycle();
-					System.out.println("Le sheduler a fait un cyle : fin");
+					//System.out.println("Le sheduler a fait un cyle : fin");
 				}while(!result);//result == true when all robot are suicide
 			}
 

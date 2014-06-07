@@ -1,9 +1,9 @@
-package rsma.aux.robot.impl;
+package rsma.cycle.robot.impl;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import rsma.aux.robot.IRobotKnowlage;
+import rsma.robot.cycle.IRobotKnowlage;
 import rsma.util.Position;
 
 public class RobotKnowlage implements IRobotKnowlage{

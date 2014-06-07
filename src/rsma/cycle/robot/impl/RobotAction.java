@@ -1,10 +1,10 @@
-package rsma.aux.robot.impl;
+package rsma.cycle.robot.impl;
 
-import rsma.aux.robot.IRobotAction;
-import rsma.aux.robot.IRobotDecision;
-import rsma.aux.robot.IRobotDecision.INTERNAL_ACTION;
 import rsma.impl.RobotImpl;
 import rsma.interfaces.IEnvironnementActions;
+import rsma.robot.cycle.IRobotAction;
+import rsma.robot.cycle.IRobotDecision;
+import rsma.robot.cycle.IRobotDecision.INTERNAL_ACTION;
 import rsma.util.Position;
 
 public class RobotAction implements IRobotAction{

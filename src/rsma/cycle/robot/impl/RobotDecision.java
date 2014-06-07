@@ -1,17 +1,19 @@
-package rsma.aux.robot.impl;
+package rsma.cycle.robot.impl;
 
 import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Assert;
 
-import rsma.aux.robot.IRobotDecision;
-import rsma.aux.robot.IRobotKnowlage;
-import rsma.aux.robot.IRobotKnowlage.INTERNAL_LANE_STATUS;
-import rsma.aux.robot.IRobotPerception;
-import rsma.aux.robot.IRobotPerception.SEARCH_PERCEPTION;
 import rsma.impl.RobotImpl;
 import rsma.impl.RobotImpl.INTERNAL_AIM;
 import rsma.interfaces.IEnvironnementAnalysis.WORLD_ENTITY;
+import rsma.robot.cycle.IRobotDecision;
+import rsma.robot.cycle.IRobotKnowlage;
+import rsma.robot.cycle.IRobotPerception;
+import rsma.robot.cycle.IRobotKnowlage.INTERNAL_LANE_STATUS;
+import rsma.robot.cycle.IRobotPerception.SEARCH_PERCEPTION;
 import rsma.util.Position;
 
 public class RobotDecision implements IRobotDecision{
@@ -33,6 +35,7 @@ public class RobotDecision implements IRobotDecision{
 	private RobotImpl robotAgent;
 	private IRobotKnowlage robotKnowlage;
 	private IRobotPerception robotPerception;
+	int cpt=0;
 
 	public RobotDecision(RobotImpl robotImpl, IRobotKnowlage robotKnowlage, IRobotPerception robotPerception) {
 		this.robotAgent = robotImpl;
@@ -171,37 +174,47 @@ public class RobotDecision implements IRobotDecision{
 
 	private Position tryToComputeAlt(Position currentPosition, Position nextPost) {
 		Position alt = currentPosition;
-		Position tryAlt;
-		int bestDist = Integer.MAX_VALUE;
+		List<Position> goodsAlts = new ArrayList<Position>(); //The list of alternatives
+		Position tryAlt; //current alternative
+		int bestDist = Integer.MAX_VALUE; //init the best distance
 		int tryDist;
 		for(int xOffset=-1; xOffset<2; xOffset ++){
-			for(int yOffset=-1; yOffset<2; yOffset++){
+			for(int yOffset=-1; yOffset<2; yOffset++){ //for all 1-neighborhood of robot
 				tryAlt = new Position(currentPosition.getX() + xOffset, currentPosition.getY() + xOffset);
-				if(!tryAlt.equals(nextPost) && RobotUtils.positionIsValide(tryAlt)){
-					tryDist = RobotUtils.getDistance(tryAlt, nextPost);
-					if(robotPerception.getWorldEntityFromPosition(currentPosition, tryAlt).equals(WORLD_ENTITY.EMPTY)&&tryDist<bestDist){
-						alt = tryAlt;
-						bestDist = tryDist;
+				if(!tryAlt.equals(nextPost) && RobotUtils.positionIsValide(tryAlt)){ //if the current neighbor is valid
+					tryDist = RobotUtils.getDistance(tryAlt, nextPost); //compute the distance from bad position to alternative
+					if(robotPerception.getWorldEntityFromPosition(currentPosition, tryAlt).equals(WORLD_ENTITY.EMPTY)&&tryDist<=bestDist){ //if the alternative is empty and equals or best than current best distance
+						if(tryDist<bestDist){ //if best 
+							goodsAlts.clear(); //clear all previous alternatives
+							bestDist = tryDist; //update the best distance
+						}
+						goodsAlts.add(tryAlt);//add alternative
 					}
 				}
 			}
 		}
+		alt = goodsAlts.get(RobotUtils.getRandomInt(goodsAlts.size()));//choice a random alternative
 		if(!alt.equals(currentPosition)){
-			INTERNAL_AIM aim = robotAgent.getAim();
-			state = aim.equals(INTERNAL_AIM.PULL_AIM) ? INTERNAL_STATE.ZONE_PULL_GO : INTERNAL_STATE.ZONE_PUSH_GO;			
-			if(state.equals(INTERNAL_STATE.ZONE_PULL_GO)){
-				if(robotKnowlage.knowPullLane()){
-					state = INTERNAL_STATE.LANE_PULL_GO;
-					nextPost = lanePullGo(currentPosition);
+			if(state != INTERNAL_STATE.FREEPLACE_SEARCH){
+				INTERNAL_AIM aim = robotAgent.getAim();
+				state = aim.equals(INTERNAL_AIM.PULL_AIM) ? INTERNAL_STATE.ZONE_PULL_GO : INTERNAL_STATE.ZONE_PUSH_GO;			
+				if(state.equals(INTERNAL_STATE.ZONE_PULL_GO)){
+					if(robotKnowlage.knowPullLane()){
+						state = INTERNAL_STATE.LANE_PULL_GO;
+						nextPost = lanePullGo(currentPosition);
+					}else{
+						nextPost = zonePullGo(currentPosition);
+					}
 				}else{
-					nextPost = zonePullGo(currentPosition);
+					if(robotKnowlage.knowPushLane()){
+						state = INTERNAL_STATE.LANE_PUSH_GO;
+						nextPost = lanePushGo(currentPosition);
+					}else{
+						nextPost = zonePushGo(currentPosition);
+					}
 				}
-			}else{
-				if(robotKnowlage.knowPushLane()){
-					state = INTERNAL_STATE.LANE_PUSH_GO;
-					nextPost = lanePushGo(currentPosition);
-				}else{
-					nextPost = zonePushGo(currentPosition);
+				if(robotPerception.getWorldEntityFromPosition(currentPosition, nextPost).equals(WORLD_ENTITY.EMPTY)){
+					alt = nextPost;
 				}
 			}
 		}
@@ -222,7 +235,7 @@ public class RobotDecision implements IRobotDecision{
 		if(RobotUtils.positionIsValide(downPosit)){
 			distDownPositToZone = RobotUtils.getEuclideDistance(downPosit, positZone);
 		}
-	
+
 		if(distDownPositToZone>distUpPositToZone){
 			stateLaneSearch = INTERNAL_STATE.LANE_SEARCH_UP;
 		}else if(distDownPositToZone==distUpPositToZone){
@@ -308,6 +321,7 @@ public class RobotDecision implements IRobotDecision{
 		}else if(RobotUtils.getDistance(currentPosition, freePlacePost)==1){
 			nextPost = freePlacePost;
 			action = INTERNAL_ACTION.PUSH;
+			cpt++;
 			robotAgent.setAim(INTERNAL_AIM.PULL_AIM);
 			if(robotKnowlage.knowPullLane()){
 				state = INTERNAL_STATE.LANE_PULL_GO;
@@ -595,7 +609,7 @@ public class RobotDecision implements IRobotDecision{
 	private Position lanePuXXGo(Position currentPosition, IRobotKnowlage.INTERNAL_LANE_STATUS lane) {
 		Position nextPost = null;
 		Position lanePost = robotKnowlage.getPositionOf(lane);
-		System.out.println("RD : knowlage get postLane" + lane + " "+lanePost);
+		//System.out.println("RD : knowlage get postLane" + lane + " "+lanePost);
 		Assert.assertNotNull(lanePost);
 		if(currentPosition.equals(lanePost)){
 			state = INTERNAL_STATE.LANE_IN;
