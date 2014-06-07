@@ -60,7 +60,6 @@ public class Frame extends JFrame implements Observer {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         
         // Draw entities.
-        g.setColor(Color.BLACK);
         for (Entry<Position, WORLD_ENTITY> entity : entities) {
             int x = ENTITY_SIZE * entity.getKey().getX();
             int y = ENTITY_SIZE * entity.getKey().getY();
@@ -69,18 +68,20 @@ public class Frame extends JFrame implements Observer {
             case EMPTY:
                 break;
             case WALL:
+                g.setColor(new Color(102, 51, 0));
                 g.fillRect(x, y, ENTITY_SIZE, ENTITY_SIZE);
                 break;
             case RESOURCE:
+                g.setColor(new Color(0, 102, 0));
                 g.fillOval(x, y, ENTITY_SIZE, ENTITY_SIZE);
                 break;
             case ROBOT:
+                g.setColor(new Color(0, 0, 153));
                 g.fillRect(x, y, ENTITY_SIZE, ENTITY_SIZE);
                 break;
             case ROBOT_AND_RESOURCE:
+                g.setColor(new Color(0, 102, 153));
                 g.fillRect(x, y, ENTITY_SIZE, ENTITY_SIZE);
-                g.setColor(Color.RED);
-                g.drawRect(x, y, ENTITY_SIZE, ENTITY_SIZE);
                 break;
             default:
                 break;
