@@ -219,6 +219,13 @@ public class RobotPerception implements IRobotPerception{
 		return localTempPercep[Y_POSIT_REF -1 ][X_POSIT_REF].equals(WORLD_ENTITY.WALL) && localTempPercep[Y_POSIT_REF +1 ][X_POSIT_REF].equals(WORLD_ENTITY.WALL);
 	}
 
+	@Override
+	public boolean yWallDetect(int xOffset) {
+		return localTempPercep[Y_POSIT_REF +1 ][X_POSIT_REF+xOffset].equals(WORLD_ENTITY.WALL) || localTempPercep[Y_POSIT_REF][X_POSIT_REF+xOffset].equals(WORLD_ENTITY.WALL) || localTempPercep[Y_POSIT_REF -1 ][X_POSIT_REF+xOffset].equals(WORLD_ENTITY.WALL); 
+	}
+
+
+
 
 
 }
