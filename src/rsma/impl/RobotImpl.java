@@ -67,6 +67,8 @@ public class RobotImpl extends Robot{
 					doSuicide = nextPost == null;
 					if(!doSuicide){
 						currentPosition = robotAction.doAction(nextPost, robotDecision);
+					}else{
+						eco_requires().pEnvAction().suicideRobot(currentPosition);
 					}
 				}
 				return doSuicide;

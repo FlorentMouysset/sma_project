@@ -50,4 +50,7 @@ public interface IEnvironnementActions {
 	 * */
 	void addRobot(Position robotPost);
 	
+	
+	void suicideRobot(Position robotPost);
+	
 }

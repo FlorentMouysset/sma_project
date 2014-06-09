@@ -65,6 +65,11 @@ public class EcoJoinImpl extends EcoJoining{
 					public void addRobot(Position robotPost) {
 						eco_requires().prxActions().addRobot(robotPost);
 					}
+
+					@Override
+					public void suicideRobot(Position robotPost) {
+						eco_requires().prxActions().suicideRobot(robotPost);
+					}
 				};
 			}
 		};

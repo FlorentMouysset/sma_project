@@ -211,6 +211,12 @@ public class EnvironnementImpl extends Environnement{
 				notifyChangement(new WarehouseChangement(makeTheSimpleChangingMap(robotPost)));
 				//printMatrix();
 			}
+
+			@Override
+			public void suicideRobot(Position robotPost) {
+				world[robotPost.getY()][robotPost.getX()] = WORLD_ENTITY.EMPTY;
+				notifyChangement(new WarehouseChangement(makeTheSimpleChangingMap(robotPost)));
+			}
 		};
 	}
 
