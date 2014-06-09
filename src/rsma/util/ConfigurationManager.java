@@ -8,6 +8,7 @@ import java.util.Properties;
 
 public class ConfigurationManager {
 	private static ConfigurationManager instance = null;
+	private static int speed;
 	private Properties prop;
 	
 	private ConfigurationManager(){
@@ -43,5 +44,12 @@ public class ConfigurationManager {
 	public static String getProperty(String key){
 		return getInstance().prop.getProperty(key);
 	}
+
+	public static void speed(int i) {
+		speed = i;
+	}
 	
+	public static int getSpeed() {
+		return speed;
+	}
 }

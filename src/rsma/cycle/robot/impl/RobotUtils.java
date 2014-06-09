@@ -15,7 +15,11 @@ public class RobotUtils {
 	public static Rectangle pushZone;
 	public static int X_MAX;
 	public static int Y_MAX;
-	private static Random rand;
+	private Random rand;
+	
+	public RobotUtils(){
+		rand = new Random(System.nanoTime());
+	}
 	
 	public static boolean positionIsValide(Position posit) {
 		return posit.getX()>=0 && posit.getY()>=0 && posit.getX()<X_MAX && posit.getY()<Y_MAX;
@@ -24,9 +28,8 @@ public class RobotUtils {
 	/**
 	 * Return a random position into the rectangle and isn't excludePost
 	 * */
-	public static Position getRandomPostOnRectangle(Rectangle rectangle, Position excludePost){
+	public Position getRandomPostOnRectangle(Rectangle rectangle, Position excludePost){
 		Position retPost = null;
-		initRand();
 		do{
 			int x = getRandomInt(rectangle.width);
 			x +=rectangle.x;
@@ -37,12 +40,6 @@ public class RobotUtils {
 		}while(retPost.equals(excludePost));
 		Assert.assertTrue(positionIsValide(retPost));
 		return retPost;
-	}
-	
-	private static void initRand() {
-		if(rand == null){
-			rand = new Random(System.currentTimeMillis());
-		}
 	}
 
 	/**
@@ -84,13 +81,11 @@ public class RobotUtils {
 		return Math.sqrt( Math.pow((positZone.getX() - posit.getX()),2) + Math.pow( (positZone.getY() - posit.getY()), 2) );
 	}
 
-	public static boolean getRandomBool() {
-		initRand();
+	public boolean getRandomBool() {
 		return rand.nextBoolean();
 	}
 
-	public static int getRandomInt(int size) {
-		initRand();
+	public int getRandomInt(int size) {
 		return rand.nextInt(size);
 	}
 	

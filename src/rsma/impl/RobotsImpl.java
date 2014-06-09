@@ -42,7 +42,7 @@ public class RobotsImpl extends Robots{
 			x = genRand.nextInt(x_size);
 			y = genRand.nextInt(y_size);
 			cpt++;
-			if(cpt==1){
+			/*if(cpt==1){
 				x=11;
 				y=2;
 			}else if(cpt==2){
@@ -54,7 +54,7 @@ public class RobotsImpl extends Robots{
 			}else if(cpt==4){
 				x=10;
 				y=2;
-			}
+			}*/
 			position = new Position(x, y);
 		}while(!requires().pEnvLookAt().getWorldEntityAt(position).equals(WORLD_ENTITY.EMPTY)); //POF ! Fix Me ??
 		return position;
@@ -69,7 +69,7 @@ public class RobotsImpl extends Robots{
 				List<Robot.Component> robotListSuicide = new ArrayList<Robot.Component>();
 				boolean result;
 				for(Robot.Component robot : robotList){
-					//System.out.println("ROBOTS robots : lancement d'un clycle pour un robot");
+					//System.out.println(" robots : lancement d'un clycle pour un robot");
 					result = robot.roboActionPort().doCycle();
 					if(result){
 						robotListSuicide.add(robot);

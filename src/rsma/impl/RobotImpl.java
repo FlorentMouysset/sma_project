@@ -32,6 +32,7 @@ public class RobotImpl extends Robot{
 	private IRobotDecision robotDecision;
 	private IRobotAction robotAction;
 	private IRobotKnowlage robotKnowlage;
+	private RobotUtils robotUtils;
 	
 	public RobotImpl(String id, Position positionInit, Rectangle pullZone, Rectangle pushZone){
 		this.id = id;
@@ -47,9 +48,10 @@ public class RobotImpl extends Robot{
 	@Override
 	protected void start() {
 		super.start();
+		robotUtils = new RobotUtils();
 		robotKnowlage = new RobotKnowlage();
 		robotPerception = new RobotPerception(this, eco_requires().pEnvLookAt());
-		robotDecision = new RobotDecision(this, robotKnowlage, robotPerception);
+		robotDecision = new RobotDecision(this, robotKnowlage, robotPerception, robotUtils);
 		robotAction = new RobotAction(this, eco_requires().pEnvAction());
 	}
 	

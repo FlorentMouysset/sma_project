@@ -76,7 +76,6 @@ public class EnvironnementImpl extends Environnement{
 		int pushXLenght = Integer.parseInt(ConfigurationManager.getProperty("PUSH_ZONE_X_LENGHT"));
 		int pushYLenght= Integer.parseInt(ConfigurationManager.getProperty("PUSH_ZONE_Y_LENGHT"));
 		pushZone = new Rectangle(pushXStart, pushYStart, pushXLenght, pushYLenght);
-		//printMatrix();
 	};
 	
 	private void fillTheMatrixByEntity(int xStart, int xLenght, int yStart, int yLenght, WORLD_ENTITY entity){
@@ -87,37 +86,6 @@ public class EnvironnementImpl extends Environnement{
 		}
 	}
 	
-	private void printMatrix(){
-		char car;
-		for(int y=0; y< Y_SIZE; y++){
-			for(int x = 0 ; x<X_SIZE; x++){	
-				//System.out.println("x=" + x +"  y=" + y);
-				switch (world[y][x]) {
-				case EMPTY:
-					car = '_';
-					break;
-				case WALL:
-					car = 'X';
-					break;
-				case RESOURCE:
-					car = 'o';
-					break;
-				case ROBOT:
-					car = 'O';
-					break;
-				case ROBOT_AND_RESOURCE:
-					car = '@';
-					break;
-				default:
-					car = 'E';
-					break;
-				}
-				System.out.print(car);
-			}
-			System.out.print("\n");
-		}
-		
-	}
 	
 	@Override
 	protected IEnvironnementAnalysis make_envLookAtPort() {
@@ -167,7 +135,6 @@ public class EnvironnementImpl extends Environnement{
 			
 			@Override
 			public void moveRobot(Position oldPosition, Position newPosition) {
-				//System.out.println("ENV : un robot bouge de " + oldPosition +" à " + newPosition );
 				if(world[newPosition.getY()][newPosition.getX()]== WORLD_ENTITY.EMPTY){
 					WORLD_ENTITY oldRobot = world[oldPosition.getY()][oldPosition.getX()];
 					world[oldPosition.getY()][oldPosition.getX()] = WORLD_ENTITY.EMPTY;
@@ -176,17 +143,14 @@ public class EnvironnementImpl extends Environnement{
 					Map<Position, WORLD_ENTITY> changingMap = makeTheSimpleChangingMap(oldPosition);
 					changingMap.putAll(makeTheSimpleChangingMap(newPosition));
 					notifyChangement(new WarehouseChangement(changingMap));
-					//System.out.println("Ok pour ce deplacement");
 				}else{
 					System.out.println("KO pour ce mvt, la position n'est pas vide il y a " + world[newPosition.getY()][newPosition.getX()]);
 					System.out.println("oldPosit = " + oldPosition + "  newPosition" + newPosition);
 					Assert.fail();
 				}
-				//printMatrix();
 				try {
-					Thread.sleep(50);
+					Thread.sleep(ConfigurationManager.getSpeed());
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -213,7 +177,6 @@ public class EnvironnementImpl extends Environnement{
 				System.out.println("ENV : ajout d'un robot à " + robotPost );
 				world[robotPost.getY()][robotPost.getX()] = WORLD_ENTITY.ROBOT;
 				notifyChangement(new WarehouseChangement(makeTheSimpleChangingMap(robotPost)));
-				//printMatrix();
 			}
 
 			@Override

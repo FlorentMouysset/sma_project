@@ -11,7 +11,8 @@ import rsma.util.ConfigurationManager;
 public class Main {
 
 	public static void main(String[] args) {
-		ConfigurationManager.loadPropertiesFile("warehouse.properties");
+		ConfigurationManager.loadPropertiesFile("warehouse5.properties");
+		ConfigurationManager.speed(0);//0= very quik, 1000 low, +1000 very low
 
 		//create the warehouse
 		final Warehouse.Component warehouse = (new WarehouseImpl()).newComponent();

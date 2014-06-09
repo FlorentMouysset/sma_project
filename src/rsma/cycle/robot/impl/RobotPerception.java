@@ -134,7 +134,7 @@ public class RobotPerception implements IRobotPerception{
 		while(xOffset<lookDeep && ret==null){
 			xOffset++;
 			WORLD_ENTITY weTry = localTempPercep[Y_POSIT_REF][X_POSIT_REF + (xDirection*xOffset)];
-			if(weTry.equals(we)){
+			if(weTry!=null && weTry.equals(we)){
 				Position currentPosition = robotAgent.getCurrentPosition();
 				ret = new Position(currentPosition.getX() + (xDirection*xOffset), currentPosition.getY());
 			}
