@@ -13,6 +13,8 @@ public class RobotKnowlage implements IRobotKnowlage{
 	private Map<INTERNAL_LANE_STATUS, Position> laneMap = new HashMap<INTERNAL_LANE_STATUS, Position>();
 	private Set<Position> freePlaceResourcesOnPullZone = new HashSet<Position>();
 	private Set<Position> freePlaceOnPushZone = new HashSet<Position>();
+	private int nbSucces = 0;
+	private int nbConflict = 0;
 	
 	@Override
 	public boolean knowPushLane() {
@@ -90,6 +92,26 @@ public class RobotKnowlage implements IRobotKnowlage{
 	@Override
 	public boolean knowFreePlace() {
 		return !freePlaceOnPushZone.isEmpty();
+	}
+
+	@Override
+	public int getNbSucces() {
+		return nbSucces;
+	}
+
+	@Override
+	public int getNbConflicts() {
+		return nbConflict;
+	}
+
+	@Override
+	public void addSucces() {
+		nbSucces++;
+	}
+
+	@Override
+	public void addConflicts() {
+		nbConflict++;
 	}
 
 

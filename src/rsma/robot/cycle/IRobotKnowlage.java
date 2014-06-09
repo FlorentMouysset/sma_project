@@ -27,5 +27,9 @@ public interface IRobotKnowlage {
 	Position getAFreePlace();
 	boolean knowFreePlace();
 	void reverseLaneKnowlage();
+	int getNbSucces();
+	int getNbConflicts();
+	void addSucces();
+	void addConflicts();
 
 }

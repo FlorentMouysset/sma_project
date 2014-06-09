@@ -30,7 +30,7 @@ public class RobotDecision implements IRobotDecision{
 	}
 	}
 	private static final int NB_CYC_RESI_OPP = 5;
-	private static final int RAN_AMPITUDE_CYC_RESI_OPP = 3;
+	private int ranAmplitudeCycResiOpp= 3;
 	private static final int NB_CYC_RESI_FRIEND = 3;
 	private static final int RAN_AMPITUDE_CYC_RESI_FRIEND = 0;
 
@@ -312,6 +312,7 @@ public class RobotDecision implements IRobotDecision{
 			rscPlacesPost.add(freePlacePost);
 			freePlacesPost.clear();
 			robotKnowlage.updateFreePlaces(freePlacesPost, rscPlacesPost);
+			robotKnowlage.addSucces();
 			action = INTERNAL_ACTION.PUSH;
 			robotAgent.setAim(INTERNAL_AIM.PULL_AIM);
 			if(robotKnowlage.knowPullLane()){
@@ -439,6 +440,7 @@ public class RobotDecision implements IRobotDecision{
 			force = true;
 			robotKnowlage.confirmTryLane(RobotUtils.getLaneStatusFromAim(aim));
 			robotKnowlage.reverseLaneKnowlage();
+			robotKnowlage.addConflicts();
 			nextPost = restartRandomSearchLane(currentPosition, aim);
 		}else{
 			Position position = robotPerception.perceptionHasEntity(RobotUtils.getRobotSameTypeByAim(aim), perceptType.reverse());	
@@ -541,7 +543,8 @@ public class RobotDecision implements IRobotDecision{
 			if(otherRobotPosit != null){
 				dist = RobotUtils.getDistance(currentPosition, otherRobotPosit);
 			}
-			int nbRandCycOpp = RobotUtils.getRandomInt(NB_CYC_RESI_OPP)+RAN_AMPITUDE_CYC_RESI_OPP;
+			ranAmplitudeCycResiOpp = updateConviction();
+			int nbRandCycOpp = RobotUtils.getRandomInt(NB_CYC_RESI_OPP)+ranAmplitudeCycResiOpp;
 			if(cptCycleLaneWainting<nbRandCycOpp && dist==1){
 				if(hadLanePriority(currentPosition, otherRobotPosit, oppositeRobotType) || force ){
 					cptCycleLaneWainting++;
@@ -598,6 +601,18 @@ public class RobotDecision implements IRobotDecision{
 			}
 		}
 		return nextPost;
+	}
+
+	private int updateConviction() {
+		int nbSucces = robotKnowlage.getNbSucces();
+		int nbConflicts = robotKnowlage.getNbConflicts();
+		int ret = 3;
+		if(nbConflicts==0){
+			ret = 7;
+		}else{
+			ret = (nbSucces/nbConflicts>1) ? 7 : 3; 
+		}
+		return ret;
 	}
 
 	private Position searchLane(Position currentPosition, int yDirection){
