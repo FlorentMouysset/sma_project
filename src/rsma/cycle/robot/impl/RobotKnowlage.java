@@ -44,6 +44,18 @@ public class RobotKnowlage implements IRobotKnowlage{
 	}
 
 	@Override
+	public void reverseLaneKnowlage() {
+		Position pullLanePosit = laneMap.get(INTERNAL_LANE_STATUS.PULL_LANE);
+		Position pushLanePosit = laneMap.get(INTERNAL_LANE_STATUS.PUSH_LANE);
+		if(pullLanePosit!=null){
+			laneMap.put(INTERNAL_LANE_STATUS.PUSH_LANE, pullLanePosit);
+		}
+		if(pushLanePosit!=null){
+			laneMap.put(INTERNAL_LANE_STATUS.PULL_LANE, pushLanePosit);
+		}
+	}
+	
+	@Override
 	public void forgetTryLane() {
 		laneMap.remove(INTERNAL_LANE_STATUS.TRY);
 	}
@@ -79,5 +91,7 @@ public class RobotKnowlage implements IRobotKnowlage{
 	public boolean knowFreePlace() {
 		return !freePlaceOnPushZone.isEmpty();
 	}
+
+
 
 }

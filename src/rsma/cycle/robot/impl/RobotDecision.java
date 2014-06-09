@@ -28,13 +28,12 @@ public class RobotDecision implements IRobotDecision{
 	public boolean isLaneGoState() {
 		return this == LANE_PULL_GO || this == LANE_PUSH_GO;
 	}
-
-	public boolean isLaneSearchState() {
-		return this == LANE_SEARCH_DOWN || this == LANE_SEARCH_UP;
-	}
 	}
 	private static final int NB_CYC_RESI_OPP = 5;
-	private static final int NB_CYC_RESI_FRIEND = 3;;
+	private static final int RAN_AMPITUDE_CYC_RESI_OPP = 3;
+	private static final int NB_CYC_RESI_FRIEND = 3;
+	private static final int RAN_AMPITUDE_CYC_RESI_FRIEND = 0;
+
 	private INTERNAL_STATE state = INTERNAL_STATE.ZONE_PULL_GO;
 
 	private INTERNAL_ACTION action;
@@ -43,6 +42,7 @@ public class RobotDecision implements IRobotDecision{
 	private IRobotKnowlage robotKnowlage;
 	private IRobotPerception robotPerception;
 	private boolean force = false;
+	private INTERNAL_ACTION lastAction;
 
 	public RobotDecision(RobotImpl robotImpl, IRobotKnowlage robotKnowlage, IRobotPerception robotPerception) {
 		this.robotAgent = robotImpl;
@@ -99,6 +99,11 @@ public class RobotDecision implements IRobotDecision{
 		if(nextPost!=null){
 			nextPost = computeAlternativeIfNeed(currentPosition, nextPost);
 		}
+		//TODO rm
+		if(lastAction == INTERNAL_ACTION.NOTHING && action==INTERNAL_ACTION.NOTHING){
+			System.out.println("bloc ?");
+		}
+		lastAction = action;
 		return nextPost;
 	}
 
@@ -194,31 +199,6 @@ public class RobotDecision implements IRobotDecision{
 		alt = goodsAlts.get(RobotUtils.getRandomInt(goodsAlts.size()));//choice a random alternative
 		if(!alt.equals(currentPosition)){
 			action = INTERNAL_ACTION.WALK;
-			if(state != INTERNAL_STATE.FREEPLACE_SEARCH &&false){
-				INTERNAL_AIM aim = robotAgent.getAim();
-				INTERNAL_STATE altState;
-				if(aim.equals(INTERNAL_AIM.PULL_AIM)){
-					//if(robotKnowlage.knowPullLane()){
-					altState = INTERNAL_STATE.ZONE_PULL_GO;
-					//nextPost = lanePullGo(currentPosition);
-					//}else{
-					nextPost = zonePullGo(currentPosition);
-					//}
-				}else{
-					//if(robotKnowlage.knowPushLane()){
-					altState = INTERNAL_STATE.ZONE_PUSH_GO;
-					//	nextPost = lanePushGo(currentPosition);
-					//}else{
-					nextPost = zonePushGo(currentPosition);
-					//}
-				}
-				if(state.isLaneSearchState()){
-					state = altState;
-				}
-				if(robotPerception.getWorldEntityFromPosition(currentPosition, nextPost).equals(WORLD_ENTITY.EMPTY)){
-					alt = nextPost;
-				}
-			}
 		}
 		return alt;
 	}
@@ -457,9 +437,9 @@ public class RobotDecision implements IRobotDecision{
 		SEARCH_PERCEPTION perceptType = (aim == INTERNAL_AIM.PULL_AIM) ? SEARCH_PERCEPTION.LEFT : SEARCH_PERCEPTION.RIGHT;
 		if(robotPerception.perceptionCurrentPositionIsLaneExit(perceptType)){
 			force = true;
-			robotKnowlage.confirmTryLane(RobotUtils.getLaneStatusFromAim(aim.reverse()));
+			robotKnowlage.confirmTryLane(RobotUtils.getLaneStatusFromAim(aim));
+			robotKnowlage.reverseLaneKnowlage();
 			nextPost = restartRandomSearchLane(currentPosition, aim);
-			//nextPost = laneSearchDown(restartPosition);
 		}else{
 			Position position = robotPerception.perceptionHasEntity(RobotUtils.getRobotSameTypeByAim(aim), perceptType.reverse());	
 			int dist = Integer.MAX_VALUE;
@@ -561,19 +541,32 @@ public class RobotDecision implements IRobotDecision{
 			if(otherRobotPosit != null){
 				dist = RobotUtils.getDistance(currentPosition, otherRobotPosit);
 			}
-			if(cptCycleLaneWainting<NB_CYC_RESI_OPP && dist==1){
+			int nbRandCycOpp = RobotUtils.getRandomInt(NB_CYC_RESI_OPP)+RAN_AMPITUDE_CYC_RESI_OPP;
+			if(cptCycleLaneWainting<nbRandCycOpp && dist==1){
 				if(hadLanePriority(currentPosition, otherRobotPosit, oppositeRobotType) || force ){
 					cptCycleLaneWainting++;
 					nextPost = currentPosition;
 					action = INTERNAL_ACTION.NOTHING;
 				}else{
-					state = INTERNAL_STATE.RESIGNATION;
-					cptCycleLaneWainting = 0;
-					nextPost = resignation(currentPosition);
-					// update lanemap ???
+					if(force){
+						if(RobotUtils.getRandomBool()){
+							cptCycleLaneWainting=0;
+							nextPost = currentPosition;
+							action = INTERNAL_ACTION.NOTHING;
+						}else{
+							state = INTERNAL_STATE.RESIGNATION;
+							cptCycleLaneWainting = 0;
+							nextPost = resignation(currentPosition);
+						}
+					}else{
+						state = INTERNAL_STATE.RESIGNATION;
+						cptCycleLaneWainting = 0;
+						nextPost = resignation(currentPosition);
+						// update lanemap ???
+					}
 				}
 			}else if(cptCycleLaneWainting >= NB_CYC_RESI_OPP){
-				state = INTERNAL_STATE.RESIGNATION;
+				state = INTERNAL_STATE.RESIGNATION; //TODO del ??
 				cptCycleLaneWainting = 0;
 				nextPost = resignation(currentPosition);
 				// update lanemap ??
@@ -583,12 +576,13 @@ public class RobotDecision implements IRobotDecision{
 				if(otherRobotPosit != null){
 					dist = RobotUtils.getDistance(currentPosition, otherRobotPosit);
 				}
-				if(dist < 3 && cptCycleLaneWainting>=NB_CYC_RESI_FRIEND){
+				int nbRandCycFriend = RobotUtils.getRandomInt(NB_CYC_RESI_FRIEND)+RAN_AMPITUDE_CYC_RESI_FRIEND;
+				if(dist < 3 && cptCycleLaneWainting>=nbRandCycFriend){
 					state =INTERNAL_STATE.RESIGNATION;
 					cptCycleLaneWainting = 0;
 					nextPost = resignation(currentPosition);
 					// update lanemap ???
-				}else if(dist <= 3 && cptCycleLaneWainting<NB_CYC_RESI_FRIEND){
+				}else if(dist <= 3 && cptCycleLaneWainting<nbRandCycFriend){
 					cptCycleLaneWainting++;
 					action = INTERNAL_ACTION.NOTHING;
 					nextPost = currentPosition;

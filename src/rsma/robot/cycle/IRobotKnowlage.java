@@ -26,5 +26,6 @@ public interface IRobotKnowlage {
 			List<Position> rscPlacesPost);
 	Position getAFreePlace();
 	boolean knowFreePlace();
+	void reverseLaneKnowlage();
 
 }
