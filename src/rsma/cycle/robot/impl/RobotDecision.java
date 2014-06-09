@@ -31,8 +31,9 @@ public class RobotDecision implements IRobotDecision{
 	}
 	private static final int NB_CYC_RESI_OPP = 5;
 	private int ranAmplitudeCycResiOpp= 3;
-	private static final int NB_CYC_RESI_FRIEND = 3;
-	private static final int RAN_AMPITUDE_CYC_RESI_FRIEND = 0;
+	private static final int NB_CYC_RESI_FRIEND = 1;
+	private static final int RAN_AMPITUDE_CYC_RESI_FRIEND = 3;
+	private static final int PROBA_TO_NOTHING = 20; //probabilité de ne pas bouger si l'on est bloqué par un robot. Sur 100 
 
 	private INTERNAL_STATE state = INTERNAL_STATE.ZONE_PULL_GO;
 
@@ -42,7 +43,6 @@ public class RobotDecision implements IRobotDecision{
 	private IRobotKnowlage robotKnowlage;
 	private IRobotPerception robotPerception;
 	private boolean force = false;
-	private INTERNAL_ACTION lastAction;
 
 	public RobotDecision(RobotImpl robotImpl, IRobotKnowlage robotKnowlage, IRobotPerception robotPerception) {
 		this.robotAgent = robotImpl;
@@ -54,7 +54,7 @@ public class RobotDecision implements IRobotDecision{
 	public Position doDecision() {
 		Position nextPost= null;
 		Position currentPosition = robotAgent.getCurrentPosition();
-
+		System.out.println("Robot " + robotAgent.getID() + " state " + state + " currentP" + currentPosition + " " + robotAgent.getAim());
 		switch (state) {
 		case LANE_PULL_GO:
 			nextPost = lanePullGo(currentPosition);
@@ -99,82 +99,64 @@ public class RobotDecision implements IRobotDecision{
 		if(nextPost!=null){
 			nextPost = computeAlternativeIfNeed(currentPosition, nextPost);
 		}
-		//TODO rm
-		if(lastAction == INTERNAL_ACTION.NOTHING && action==INTERNAL_ACTION.NOTHING){
-			System.out.println("bloc ?");
-		}
-		lastAction = action;
 		return nextPost;
 	}
 
 
-	/**** N CONPUTED ALTERNATIVE [ALWAYLS]
-	 * if action == walk /\ nextpost.e != EMPTY then { //si on marche et qu'il ya un qqchose l'à où on doit allez
-	 *	 if(nextpost.e == WALL && WALL isDetect){//si c'est un mur
-	 *
-	 *		if(state == LANE_PULL_GO | LANE_PUSH_GO){ //si on est dans un état ateind de lane alors le lane a bougé
-	 *			cleanLaneKnowlage(LANE_PULL_GO | LANE_PUSH_GO) //clean connaissances
-	 *       }
-	 *		if(wall is up){ //le mur est le mur du haut
-	 *			state = LANE_SEARCH_DOWN //chercher en bas
-	 *			// refaire LANE_SEARCH_DOWN !!
-	 *		}else if(wall is down){ //le mur est le mur du bas
-	 *			state = LANE_SEARCH_UP //chercher en haut
-	 *			// refaire LANE_SEARCH_UP !!
-	 *		}else if state == pushZoneGO{//sinon mur frontale 
-	 *			state = bestLaneSearch() //return LANE_SEARCH_UP | LANE_SEARCH_DOWN //chercher en haut ou bas selon
-	 *			// refaire LANE_SEARCH_UP ou LANE_SEARCH_DOWN
-	 * 		}
-	 *	 }else{
-	 *		 	nextpost = compute_alternative_if_existe_or_restaure_with_post // si pas mur alors recher contourne sinon on reprend l'ancinne valeur
-	 *	 }	
-	 * }
-
+	/****
+	 * Calcule une position aternative si la position souhaitée n'est pas libre.
+	 * Si aucune position n'est trouvée alors le robot attend
 	 */ 
 	private Position computeAlternativeIfNeed(Position currentPosition,
 			Position nextPost) {
-		Position postAlt = nextPost;
+		Position postAlt = nextPost; //la position alternative (à calculer)
 		INTERNAL_AIM aim = robotAgent.getAim();
 		WORLD_ENTITY we = robotPerception.getWorldEntityFromPosition(currentPosition, nextPost);
 		if(action.equals(INTERNAL_ACTION.WALK) && !we.equals(WORLD_ENTITY.EMPTY) ){
-			if(we.equals(WORLD_ENTITY.WALL)&& !robotPerception.isInLane(currentPosition)){
-				if(state.isLaneGoState()){
+			if(we.equals(WORLD_ENTITY.WALL)&& !robotPerception.isInLane(currentPosition)){//la position souhaitée est un mur
+				if(state.isLaneGoState()){//si l'état était un état de recherche de couloir alors le couloir a bougé 
 					robotKnowlage.cleanLaneKnowlage(RobotUtils.getLaneStatusFromAim(aim));
 				}
-				if(nextPost.getY()==0){
-					state = INTERNAL_STATE.LANE_SEARCH_DOWN;
+				if(nextPost.getY()==0){//si mur du haut
+					state = INTERNAL_STATE.LANE_SEARCH_DOWN; //alors on descend
 					postAlt = laneSearchDown(currentPosition);
-				}else if(nextPost.getY() == RobotUtils.Y_MAX){
-					state = INTERNAL_STATE.LANE_SEARCH_UP;
+				}else if(nextPost.getY() == RobotUtils.Y_MAX){//si mur du bas
+					state = INTERNAL_STATE.LANE_SEARCH_UP;//alors on monte
 					postAlt = laneSearchUp(currentPosition);
 				}else{ //central wall
-					state = getBestLaneSearch(aim, currentPosition);
+					state = getBestLaneSearch(aim, currentPosition); //déduire la meilleur direction de recherche
 					if(state.equals(INTERNAL_STATE.LANE_SEARCH_UP)){
 						postAlt = laneSearchUp(currentPosition);
 					}else{
 						postAlt = laneSearchDown(currentPosition);
 					}
 				}
-			}else if(robotPerception.isInLane(currentPosition)){
-				state = INTERNAL_STATE.LANE_IN;
+			}else if(robotPerception.isInLane(currentPosition)){//si on est dans un couloir alors passer
+				state = INTERNAL_STATE.LANE_IN;//en mode laneIN
 				postAlt = laneIn(currentPosition);
-			}else{
-				if(we.equals(WORLD_ENTITY.ROBOT)||we.equals(WORLD_ENTITY.ROBOT_AND_RESOURCE)){
-					if(RobotUtils.getRandomInt(100)>20 || force){
+			}else{//sinon la position souhaitée est occupée pas un robot (chargé ou pas) ou une ressource
+				if(we.equals(WORLD_ENTITY.ROBOT)||we.equals(WORLD_ENTITY.ROBOT_AND_RESOURCE)){ //si c'est un robot
+					if(RobotUtils.getRandomInt(100)>PROBA_TO_NOTHING || force){//si on peut bouger on l'on est en "force"
 						postAlt = tryToComputeAlt(currentPosition, nextPost);
 					}else{
 						action = INTERNAL_ACTION.NOTHING;
 						postAlt = currentPosition;
 					}
-				}else if(we.equals(WORLD_ENTITY.RESOURCE)){
+				}else if(we.equals(WORLD_ENTITY.RESOURCE)){//si c'est une ressource alors il faut bouger
 					postAlt = tryToComputeAlt(currentPosition, nextPost);
 				}
+			}
+			if(!robotPerception.getWorldEntityFromPosition(currentPosition, postAlt).equals(WORLD_ENTITY.EMPTY)){//(re) verificaton 
+				postAlt = currentPosition;
+				action = INTERNAL_ACTION.NOTHING;
 			}
 		}
 		return postAlt;
 	}
 
-
+/**
+ * Calcule une position alternative à nextPost sachant que currentPosition est la position de départ
+ * */
 	private Position tryToComputeAlt(Position currentPosition, Position nextPost) {
 		Position alt = currentPosition;
 		List<Position> goodsAlts = new ArrayList<Position>(); //The list of alternatives
@@ -553,10 +535,11 @@ public class RobotDecision implements IRobotDecision{
 					action = INTERNAL_ACTION.NOTHING;
 				}else{
 					if(force){
-						if(RobotUtils.getRandomBool()){
+						if(RobotUtils.getRandomInt(100)>PROBA_TO_NOTHING){
 							cptCycleLaneWainting=0;
 							nextPost = currentPosition;
 							action = INTERNAL_ACTION.NOTHING;
+							force = false;
 						}else{
 							state = INTERNAL_STATE.RESIGNATION;
 							cptCycleLaneWainting = 0;

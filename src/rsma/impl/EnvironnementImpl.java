@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.junit.Assert;
+
 import rsma.Environnement;
 import rsma.interfaces.IEnvironnementActions;
 import rsma.interfaces.IEnvironnementAnalysis;
@@ -166,7 +168,7 @@ public class EnvironnementImpl extends Environnement{
 			@Override
 			public void moveRobot(Position oldPosition, Position newPosition) {
 				//System.out.println("ENV : un robot bouge de " + oldPosition +" à " + newPosition );
-				if(world[newPosition.getY()][newPosition.getX()]== WORLD_ENTITY.EMPTY){//TODO 
+				if(world[newPosition.getY()][newPosition.getX()]== WORLD_ENTITY.EMPTY){
 					WORLD_ENTITY oldRobot = world[oldPosition.getY()][oldPosition.getX()];
 					world[oldPosition.getY()][oldPosition.getX()] = WORLD_ENTITY.EMPTY;
 					world[newPosition.getY()][newPosition.getX()] = oldRobot;
@@ -176,7 +178,9 @@ public class EnvironnementImpl extends Environnement{
 					notifyChangement(new WarehouseChangement(changingMap));
 					//System.out.println("Ok pour ce deplacement");
 				}else{
-					System.out.println("KO pour ce mvt, la position n'est pas vide");
+					System.out.println("KO pour ce mvt, la position n'est pas vide il y a " + world[newPosition.getY()][newPosition.getX()]);
+					System.out.println("oldPosit = " + oldPosition + "  newPosition" + newPosition);
+					Assert.fail();
 				}
 				//printMatrix();
 				try {

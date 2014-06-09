@@ -24,7 +24,7 @@ public class RobotAction implements IRobotAction{
 		INTERNAL_ACTION action = robotDecition.getActionToDo();
 		switch (action) {
 		case WALK:
-			System.out.println("Le robot "+ id +" va bouger");
+			//System.out.println("Le robot "+ id +" va bouger");
 			envAction.moveRobot(currentPosition, actionPost);
 			currentPosition = actionPost;
 			break;

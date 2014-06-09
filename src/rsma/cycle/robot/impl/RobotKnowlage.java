@@ -42,6 +42,15 @@ public class RobotKnowlage implements IRobotKnowlage{
 		if(positLaneEntrance!=null){
 			laneMap.put(laneStatus, positLaneEntrance);					
 			laneMap.remove(INTERNAL_LANE_STATUS.TRY);
+			internalLaneMapClean(INTERNAL_LANE_STATUS.reverseStatus(laneStatus), positLaneEntrance);
+		}
+	}
+
+	private void internalLaneMapClean(INTERNAL_LANE_STATUS reverseStatus,
+			Position positLaneEntrance) {
+		Position posit = laneMap.get(reverseStatus);
+		if(posit!= null && positLaneEntrance.getY() == posit.getY()){
+			laneMap.remove(reverseStatus);
 		}
 	}
 
