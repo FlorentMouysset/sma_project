@@ -20,16 +20,22 @@ public interface IRobotKnowlage {
 	void confirmTryLane(INTERNAL_LANE_STATUS laneStatus);
 	void forgetTryLane();
 	void cleanLaneKnowlage(INTERNAL_LANE_STATUS laneStatusFromAim);
-	void rememberFreeResourcesPlaces(Position currentPosition);
+	void reverseLaneKnowlage();
+
+	void rememberOldResourcesPlaceFreeNow(Position currentPosition);
 	int countFreeResourcePlaces();
 	void updateFreePlaces(List<Position> freePlacesPost,
 			List<Position> rscPlacesPost);
 	Position getAFreePlace();
 	boolean knowFreePlace();
-	void reverseLaneKnowlage();
+	
+	
+	
 	int getNbSucces();
 	int getNbConflicts();
 	void addSucces();
 	void addConflicts();
+	
+	void rememberOldResourcesPlaceFreeNow(List<Position> freePlaces);
 
 }

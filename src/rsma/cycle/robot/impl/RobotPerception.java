@@ -1,5 +1,6 @@
 package rsma.cycle.robot.impl;
 
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -148,21 +149,26 @@ public class RobotPerception implements IRobotPerception{
 
 	@Override
 	public List<Position> searchOnPerceptionFreePlacesPositionOnPushZone() {
-		return searchOnPerceptionPushZone(WORLD_ENTITY.EMPTY);
+		return searchOnPerceptionZone(WORLD_ENTITY.EMPTY, RobotUtils.pushZone);
+	}
+	
+	@Override
+	public List<Position> searchOnPerceptionFreePlacesPositionOnPullZone() {
+		return searchOnPerceptionZone(WORLD_ENTITY.EMPTY, RobotUtils.pullZone);
 	}
 	
 	@Override
 	public List<Position> searchOnPerceptionResourcesPlacesPositionOnPushZone() {
-		return searchOnPerceptionPushZone(WORLD_ENTITY.RESOURCE);
+		return searchOnPerceptionZone(WORLD_ENTITY.RESOURCE, RobotUtils.pushZone);
 	}
 
-	private List<Position> searchOnPerceptionPushZone(WORLD_ENTITY we) {
+	private List<Position> searchOnPerceptionZone(WORLD_ENTITY we, Rectangle zone) {
 		List<Position> posts = new ArrayList<Position>();
 		InternalRobotPerceptionInterator ite = new InternalRobotPerceptionInterator();
 		while(!ite.interatorIsTerminate()){
 			Position posit = ite.getNextPosition();
 			//if the position is valide and is int he push zone
-			if(RobotUtils.positionIsValide(posit) && RobotUtils.pushZone.contains(posit.getX(), posit.getY())){
+			if(RobotUtils.positionIsValide(posit) && zone.contains(posit.getX(), posit.getY())){
 				if(localTempPercep[ite.y][ite.x].equals(we)){ //and is a free place
 					//post = posit;
 					posts.add(posit);
@@ -173,6 +179,7 @@ public class RobotPerception implements IRobotPerception{
 		return posts;
 	}
 	
+
 
 	
 	@Override
@@ -223,9 +230,5 @@ public class RobotPerception implements IRobotPerception{
 	public boolean yWallDetect(int xOffset) {
 		return localTempPercep[Y_POSIT_REF +1 ][X_POSIT_REF+xOffset].equals(WORLD_ENTITY.WALL) || localTempPercep[Y_POSIT_REF][X_POSIT_REF+xOffset].equals(WORLD_ENTITY.WALL) || localTempPercep[Y_POSIT_REF -1 ][X_POSIT_REF+xOffset].equals(WORLD_ENTITY.WALL); 
 	}
-
-
-
-
 
 }

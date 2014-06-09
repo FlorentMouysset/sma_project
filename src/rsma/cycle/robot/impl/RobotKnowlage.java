@@ -68,7 +68,7 @@ public class RobotKnowlage implements IRobotKnowlage{
 	}
 
 	@Override
-	public void rememberFreeResourcesPlaces(Position currentPosition) {
+	public void rememberOldResourcesPlaceFreeNow(Position currentPosition) {
 		freePlaceResourcesOnPullZone.add(currentPosition);
 	}
 
@@ -112,6 +112,11 @@ public class RobotKnowlage implements IRobotKnowlage{
 	@Override
 	public void addConflicts() {
 		nbConflict++;
+	}
+
+	@Override
+	public void rememberOldResourcesPlaceFreeNow(List<Position> freePlaces) {
+		freePlaceResourcesOnPullZone.addAll(freePlaces);
 	}
 
 

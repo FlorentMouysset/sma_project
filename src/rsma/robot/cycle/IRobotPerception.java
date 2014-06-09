@@ -65,4 +65,6 @@ public interface IRobotPerception {
 
 	boolean yWallDetect(int xOffset);
 
+	List<Position> searchOnPerceptionFreePlacesPositionOnPullZone();
+
 }

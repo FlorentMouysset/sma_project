@@ -69,7 +69,7 @@ public class RobotDecision implements IRobotDecision{
 			break;
 
 		case RESOURCE_SEARCH:
-			nextPost = ressourceSearch(currentPosition);
+			nextPost = resourceSearch(currentPosition);
 			break;
 
 		case ZONE_PUSH_GO:
@@ -354,7 +354,7 @@ public class RobotDecision implements IRobotDecision{
 		boolean hasRessourceFound = (rscPosit != null) && !RobotUtils.pushZone.contains(rscPosit.getX(), rscPosit.getY());
 		if( hasRessourceFound || RobotUtils.pullZone.contains(currentPosition.getX(), currentPosition.getY())){
 			state =INTERNAL_STATE.RESOURCE_SEARCH;
-			nextPost = ressourceSearch(currentPosition);
+			nextPost = resourceSearch(currentPosition);
 		}else if(robotPerception.perceptionCurrentPositionIsLaneEntrance(SEARCH_PERCEPTION.LEFT)){
 			state = INTERNAL_STATE.LANE_IN;
 			nextPost = laneIn(currentPosition);
@@ -381,23 +381,24 @@ public class RobotDecision implements IRobotDecision{
 	 * 	 extState = full
 	 *  }
 	 */
-	private Position ressourceSearch(Position currentPosition) {
+	private Position resourceSearch(Position currentPosition) {
 		Position nextPost = null;
 		Position rescPost = robotPerception.perceptionHasEntity(WORLD_ENTITY.RESOURCE, IRobotPerception.SEARCH_PERCEPTION.ALL);
+		List<Position> freePlaces = robotPerception.searchOnPerceptionFreePlacesPositionOnPullZone();
 		action = INTERNAL_ACTION.WALK;
 		if(RobotUtils.pullZone.contains(currentPosition.getX(), currentPosition.getY())){
-			robotKnowlage.rememberFreeResourcesPlaces(currentPosition);			
+			robotKnowlage.rememberOldResourcesPlaceFreeNow(freePlaces);			
 		}
 		if(rescPost == null){
 			int nbFRP = robotKnowlage.countFreeResourcePlaces();
 			if(RobotUtils.pullZone.height * RobotUtils.pullZone.width != nbFRP){
 				nextPost = moveInPullZone(currentPosition);
-			}//else if end !
+			}//else if -> end = suicide !
 		}else if(RobotUtils.getDistance(currentPosition, rescPost) == 1){
 			action = INTERNAL_ACTION.PULL;
 			nextPost = rescPost;
 			robotAgent.setAim(INTERNAL_AIM.PUSH_AIM);
-			robotKnowlage.rememberFreeResourcesPlaces(rescPost);			
+			robotKnowlage.rememberOldResourcesPlaceFreeNow(rescPost);			
 
 			if(robotKnowlage.knowPushLane()){
 				state =INTERNAL_STATE.LANE_PUSH_GO;
